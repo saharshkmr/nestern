@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "800461785370",
+    "project_id": "nestern-1be70",
+    "storage_bucket": "nestern-1be70.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800461785370:android:d21f86dd116c954be8c4a3",
+        "android_client_info": {
+          "package_name": "com.example.nestern"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAauuwBodCGfxZOt08PfIWoDrC7lq9iIVM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
