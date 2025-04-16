@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:nestern/screens/dashboard.dart';
 // import 'package:taurusai/models/user.dart';
 // import 'package:taurusai/screens/splash_screen.dart';
 // import 'package:taurusai/services/auth_service.dart';
@@ -28,7 +29,7 @@ void main() async {
     print('Failed to initialize Firebase: $e');
   }
   // User? currentUser = await AuthService().getCurrentUser();
-  // runApp(MyApp(initialUser: currentUser));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      home: Dashboard(),
       // home: SplashScreen(initialUser: initialUser),
     );
   }
