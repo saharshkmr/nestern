@@ -194,7 +194,7 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildFooter(),
+      // bottomNavigationBar: _buildFooter(),
     );
   }
 
@@ -370,201 +370,201 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
   }
 
   // Footer Widget
-  Widget _buildFooter() {
-  return LayoutBuilder(
-    builder: (context, constraints) {
-      final screenWidth = constraints.maxWidth;
+//   Widget _buildFooter() {
+//   return LayoutBuilder(
+//     builder: (context, constraints) {
+//       final screenWidth = constraints.maxWidth;
 
-      if (screenWidth < 767) {
-        // Show the footer content as shown in the image for smaller screens
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2), // Shadow color
-                spreadRadius: 2, // Spread radius
-                blurRadius: 4, // Blur radius
-                offset: Offset(0, -2), // Offset in the upward direction
-              ),
-            ],
-          ),
-          padding: EdgeInsets.symmetric(vertical: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              InkWell(
-                onTap: () {
-                  // Navigate to Home
-                },
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.home, color: Colors.blue),
-                    SizedBox(height: 4),
-                    Text(
-                      'Home',
-                      style: TextStyle(color: Colors.blue, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  // Navigate to Internships
-                },
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.send, color: Colors.black),
-                    SizedBox(height: 4),
-                    Text(
-                      'Internships',
-                      style: TextStyle(color: Colors.black, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  // Navigate to Jobs
-                },
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.work, color: Colors.black),
-                    SizedBox(height: 4),
-                    Text(
-                      'Jobs',
-                      style: TextStyle(color: Colors.black, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  // Navigate to Courses
-                },
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Stack(
-                      alignment: Alignment.topRight,
-                      children: [
-                        Icon(Icons.tv, color: Colors.black),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: Colors.orange,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Courses',
-                      style: TextStyle(color: Colors.black, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      } else {
-        // Show the original footer content for larger screens
-        return Container(
-          color: Colors.black,
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Footer Links
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildFooterColumn('Internships by places', [
-                    'Internship in India',
-                    'Internship in Delhi',
-                    'Internship in Bangalore',
-                    'View all internships',
-                  ]),
-                  _buildFooterColumn('Internship by Stream', [
-                    'Computer Science Internship',
-                    'Electronics Internship',
-                    'Finance Internship',
-                    'View all internships',
-                  ]),
-                  _buildFooterColumn('Jobs by Places', [
-                    'Jobs in Delhi',
-                    'Jobs in Mumbai',
-                    'Jobs in Bangalore',
-                    'View all jobs',
-                  ]),
-                  _buildFooterColumn('Placement Guarantee Courses', [
-                    'Full Stack Development',
-                    'Data Science',
-                    'UI/UX Design',
-                    'View all courses',
-                  ]),
-                ],
-              ),
-              Divider(color: Colors.white),
-              SizedBox(height: 8),
-              // Footer Bottom Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '© Copyright 2025 Internshala',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.facebook, color: Colors.white),
-                      SizedBox(width: 8),
-                      // Icon(Icons.twitter, color: Colors.white),
-                      // SizedBox(width: 8),
-                      // Icon(Icons.instagram, color: Colors.white),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      }
-    },
-  );
-}
+//       if (screenWidth < 767) {
+//         // Show the footer content as shown in the image for smaller screens
+//         return Container(
+//           decoration: BoxDecoration(
+//             color: Colors.white,
+//             boxShadow: [
+//               BoxShadow(
+//                 color: Colors.black.withOpacity(0.2), // Shadow color
+//                 spreadRadius: 2, // Spread radius
+//                 blurRadius: 4, // Blur radius
+//                 offset: Offset(0, -2), // Offset in the upward direction
+//               ),
+//             ],
+//           ),
+//           padding: EdgeInsets.symmetric(vertical: 16),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceAround,
+//             children: [
+//               InkWell(
+//                 onTap: () {
+//                   // Navigate to Home
+//                 },
+//                 child: Column(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Icon(Icons.home, color: Colors.blue),
+//                     SizedBox(height: 4),
+//                     Text(
+//                       'Home',
+//                       style: TextStyle(color: Colors.blue, fontSize: 12),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               InkWell(
+//                 onTap: () {
+//                   // Navigate to Internships
+//                 },
+//                 child: Column(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Icon(Icons.send, color: Colors.black),
+//                     SizedBox(height: 4),
+//                     Text(
+//                       'Internships',
+//                       style: TextStyle(color: Colors.black, fontSize: 12),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               InkWell(
+//                 onTap: () {
+//                   // Navigate to Jobs
+//                 },
+//                 child: Column(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Icon(Icons.work, color: Colors.black),
+//                     SizedBox(height: 4),
+//                     Text(
+//                       'Jobs',
+//                       style: TextStyle(color: Colors.black, fontSize: 12),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               InkWell(
+//                 onTap: () {
+//                   // Navigate to Courses
+//                 },
+//                 child: Column(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Stack(
+//                       alignment: Alignment.topRight,
+//                       children: [
+//                         Icon(Icons.tv, color: Colors.black),
+//                         Positioned(
+//                           top: 0,
+//                           right: 0,
+//                           child: Container(
+//                             width: 8,
+//                             height: 8,
+//                             decoration: BoxDecoration(
+//                               color: Colors.orange,
+//                               shape: BoxShape.circle,
+//                             ),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                     SizedBox(height: 4),
+//                     Text(
+//                       'Courses',
+//                       style: TextStyle(color: Colors.black, fontSize: 12),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         );
+//       } else {
+//         // Show the original footer content for larger screens
+//         return Container(
+//           color: Colors.black,
+//           padding: EdgeInsets.all(16.0),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               // Footer Links
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   _buildFooterColumn('Internships by places', [
+//                     'Internship in India',
+//                     'Internship in Delhi',
+//                     'Internship in Bangalore',
+//                     'View all internships',
+//                   ]),
+//                   _buildFooterColumn('Internship by Stream', [
+//                     'Computer Science Internship',
+//                     'Electronics Internship',
+//                     'Finance Internship',
+//                     'View all internships',
+//                   ]),
+//                   _buildFooterColumn('Jobs by Places', [
+//                     'Jobs in Delhi',
+//                     'Jobs in Mumbai',
+//                     'Jobs in Bangalore',
+//                     'View all jobs',
+//                   ]),
+//                   _buildFooterColumn('Placement Guarantee Courses', [
+//                     'Full Stack Development',
+//                     'Data Science',
+//                     'UI/UX Design',
+//                     'View all courses',
+//                   ]),
+//                 ],
+//               ),
+//               Divider(color: Colors.white),
+//               SizedBox(height: 8),
+//               // Footer Bottom Section
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   Text(
+//                     '© Copyright 2025 Internshala',
+//                     style: TextStyle(color: Colors.white),
+//                   ),
+//                   Row(
+//                     children: [
+//                       Icon(Icons.facebook, color: Colors.white),
+//                       SizedBox(width: 8),
+//                       // Icon(Icons.twitter, color: Colors.white),
+//                       // SizedBox(width: 8),
+//                       // Icon(Icons.instagram, color: Colors.white),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ],
+//           ),
+//         );
+//       }
+//     },
+//   );
+// }
 
-  // Helper method to build footer columns
-  Widget _buildFooterColumn(String title, List<String> items) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8),
-          ...items.map((item) => Text(item, style: TextStyle(color: Colors.white))),
-        ],
-      ),
-    );
-  }
-}
+//   // Helper method to build footer columns
+//   Widget _buildFooterColumn(String title, List<String> items) {
+//     return Expanded(
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Text(
+//             title,
+//             style: TextStyle(
+//               color: Colors.white,
+//               fontWeight: FontWeight.bold,
+//             ),
+//           ),
+//           SizedBox(height: 8),
+//           ...items.map((item) => Text(item, style: TextStyle(color: Colors.white))),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 void main() {
   runApp(MaterialApp(
@@ -584,4 +584,5 @@ void main() {
       }
     },
   ));
+}
 }

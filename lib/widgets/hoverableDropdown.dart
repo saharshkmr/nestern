@@ -5,11 +5,13 @@ class HoverableDropdown extends StatelessWidget {
   final String title;
   final List<PopupMenuItem<String>> items;
   final Widget? badge;
+  final Function(String)? onSelected; // Added onSelected parameter
 
   HoverableDropdown({
     required this.title,
     required this.items,
     this.badge,
+    this.onSelected, // Initialize onSelected
   });
 
   @override
@@ -36,7 +38,9 @@ class HoverableDropdown extends StatelessWidget {
       child: PopupMenuButton<String>(
         key: _popupKey,
         onSelected: (value) {
-          print('Selected: $value');
+          if (onSelected != null) {
+            onSelected!(value); // Call the onSelected callback
+          }
         },
         itemBuilder: (BuildContext context) => items,
         child: Row(

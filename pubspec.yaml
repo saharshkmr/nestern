@@ -64,6 +64,8 @@ flutter:
   assets:
     - assets/main_logo.png
     - assets/employer_signup.jpeg
+    - assets/curved_line.png
+    - assets/drawer.jpeg
 
   # To add assets to your application, add an assets section, like this:
   # assets:
