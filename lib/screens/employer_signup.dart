@@ -56,122 +56,142 @@ class _EmployerSignUpPageState extends State<EmployerSignUpPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60.0),
-        child: _buildHeader(context), // Use the header from Dashboard
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: PreferredSize(
+      preferredSize: Size.fromHeight(60.0),
+      child: _buildHeader(context), // Use the header from Dashboard
+    ),
+    body: Stack(
+      children: [
+        // Background Image
+        Align(
+      alignment: Alignment.bottomLeft, // Align the image to the bottom-left
+      child: Container(
+        height: 600, // Set a fixed height for the image
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/employer_signup.jpeg'), // Path to the image
+            fit: BoxFit.contain,
+            alignment: Alignment.bottomLeft,
+             // Adjust the image to fit within the container
+          ),
+        ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: 600, // Set a maximum width for the form
-              ),
-              child: Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+    ),
+        // Content
+        Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 600, // Set a maximum width for the form
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Email Field
-                      CustomInputField(
-                        controller: emailController,
-                        labelText: "Official Email Id",
-                        hintText: "name@company.com",
-                        prefixIcon: Icons.email,
-                      ),
-                      SizedBox(height: 16),
-                      // Password Field
-                      CustomInputField(
-                        controller: passwordController,
-                        labelText: "Password",
-                        hintText: "Minimum 6 characters",
-                        prefixIcon: Icons.lock,
-                        obscureText: true,
-                      ),
-                      SizedBox(height: 16),
-                      // First Name and Last Name Fields
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomInputField(
-                              controller: firstNameController,
-                              labelText: "First Name",
-                              hintText: "Your First Name",
-                              prefixIcon: Icons.person,
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: CustomInputField(
-                              controller: lastNameController,
-                              labelText: "Last Name",
-                              hintText: "Your Last Name",
-                              prefixIcon: Icons.person_outline,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      // Terms and Conditions
-                      Text(
-                        "By clicking on Post for Free, you agree to our T&C.",
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 16),
-                      // Post for Free Button
-                      ElevatedButton(
-                        onPressed: _signUp,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          minimumSize: Size(double.infinity, 40),
+                child: Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Email Field
+                        CustomInputField(
+                          controller: emailController,
+                          labelText: "Official Email Id",
+                          hintText: "name@company.com",
+                          prefixIcon: Icons.email,
                         ),
-                        child: Text("Post for Free"),
-                      ),
-                      SizedBox(height: 16),
-                      // Already Registered Section
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Already registered? "),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => LoginPage()),
-                              );
-                            },
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
+                        SizedBox(height: 16),
+                        // Password Field
+                        CustomInputField(
+                          controller: passwordController,
+                          labelText: "Password",
+                          hintText: "Minimum 6 characters",
+                          prefixIcon: Icons.lock,
+                          obscureText: true,
+                        ),
+                        SizedBox(height: 16),
+                        // First Name and Last Name Fields
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomInputField(
+                                controller: firstNameController,
+                                labelText: "First Name",
+                                hintText: "Your First Name",
+                                prefixIcon: Icons.person,
                               ),
                             ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: CustomInputField(
+                                controller: lastNameController,
+                                labelText: "Last Name",
+                                hintText: "Your Last Name",
+                                prefixIcon: Icons.person_outline,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        // Terms and Conditions
+                        Text(
+                          "By clicking on Post for Free, you agree to our T&C.",
+                          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 16),
+                        // Post for Free Button
+                        ElevatedButton(
+                          onPressed: _signUp,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            minimumSize: Size(double.infinity, 40),
                           ),
-                        ],
-                      ),
-                    ],
+                          child: Text("Post for Free"),
+                        ),
+                        SizedBox(height: 16),
+                        // Already Registered Section
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Already registered? "),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => LoginPage()),
+                                );
+                              },
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: _buildFooter(), // Add the footer
-    );
-  }
+      ],
+    ),
+    bottomNavigationBar: _buildFooter(), // Add the footer
+  );
+}
 
   // Header Widget from Dashboard
   Widget _buildHeader(BuildContext context) {
