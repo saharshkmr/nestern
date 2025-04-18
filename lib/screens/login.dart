@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:nestern/screens/employer/employer_dashboard.dart';
+import 'package:nestern/screens/employer_signup.dart';
+import 'package:nestern/screens/student/student_dashboard.dart';
+import 'package:nestern/screens/student_signup.dart';
 import 'package:nestern/widgets/custom_input_field.dart'; // Import the reusable input field
+import 'package:nestern/services/auth_service.dart'; // Import FirebaseAuthService
+import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth for User class
+import 'package:flutter/gestures.dart'; // Import for TapGestureRecognizer
 
 class LoginPage extends StatefulWidget {
   @override
@@ -7,6 +14,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final FirebaseAuthService _auth = FirebaseAuthService();
+
   final _studentEmail = TextEditingController();  
   final _studentPassword = TextEditingController();
   final _companyEmail = TextEditingController();
@@ -19,6 +28,56 @@ class _LoginPageState extends State<LoginPage> {
     _companyEmail.dispose();
     _companyPassword.dispose();
     super.dispose();
+  }
+
+  void _studentSignIn() async {
+  String email = _studentEmail.text;
+  String password = _studentPassword.text;
+
+  try {
+    User? user = await _auth.studentSignInWithEmailAndPassword(email, password);
+    if (user != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Student Login successful!')),
+      );
+      // Navigate to StudentDashboard using MaterialPageRoute
+      Navigator.push(context,MaterialPageRoute(builder: (context) => StudentDashboard()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Student Login failed. Please try again.')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: ${e.toString()}')),
+    );
+  }
+}
+
+  // Employer Sign-In Method
+  void _employerSignIn() async {
+    String email = _companyEmail.text;
+    String password = _companyPassword.text;
+
+    try {
+      User? user = await _auth.employerSignInWithEmailAndPassword(email, password);
+      if (user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Employer Login successful!')),
+        );
+        Navigator.push(context,MaterialPageRoute(builder: (context) => EmployerDashboard()),
+         ); // Navigate to Employer Dashboard
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Employer Login failed. Please try again.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
   }
 
   @override
@@ -70,38 +129,14 @@ class _LoginPageState extends State<LoginPage> {
                           height: 400, // Set a fixed height for the tab content
                           child: TabBarView(
                             children: [
-                              // Student Login Tab
                               Column(
                                 children: [
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      // Handle Google login
-                                    },
-                                    icon: Icon(Icons.g_mobiledata, color: Colors.red),
-                                    label: Text('Login with Google'),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      foregroundColor: Colors.black,
-                                      side: BorderSide(color: Colors.grey),
-                                    ),
-                                  ),
-                                  SizedBox(height: 16),
-                                  Row(
-                                    children: [
-                                      Expanded(child: Divider()),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 8),
-                                        child: Text('OR'),
-                                      ),
-                                      Expanded(child: Divider()),
-                                    ],
-                                  ),
-                                  SizedBox(height: 16),
                                   CustomInputField(
                                     labelText: 'Email',
                                     hintText: 'john@example.com',
                                     keyboardType: TextInputType.emailAddress,
                                     controller: _studentEmail,
+                                    prefixIcon: Icons.email, // Add email icon
                                   ),
                                   SizedBox(height: 16),
                                   CustomInputField(
@@ -109,6 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                                     hintText: 'Must be at least 6 characters',
                                     obscureText: true,
                                     controller: _studentPassword,
+                                    prefixIcon: Icons.lock, // Add lock icon
                                   ),
                                   SizedBox(height: 8),
                                   Align(
@@ -122,9 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   SizedBox(height: 16),
                                   ElevatedButton(
-                                    onPressed: () {
-                                      // Handle login logic
-                                    },
+                                    onPressed: _studentSignIn,
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.blue,
                                       foregroundColor: Colors.white,
@@ -139,11 +173,25 @@ class _LoginPageState extends State<LoginPage> {
                                         TextSpan(
                                           text: 'Student',
                                           style: TextStyle(color: Colors.blue),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => StudentSignUpPage()),
+                                              );
+                                            },
                                         ),
                                         TextSpan(text: ' / '),
                                         TextSpan(
                                           text: 'Company',
                                           style: TextStyle(color: Colors.blue),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => EmployerSignUpPage()),
+                                              );
+                                            },
                                         ),
                                       ],
                                     ),
@@ -158,6 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                                     hintText: 'company@example.com',
                                     keyboardType: TextInputType.emailAddress,
                                     controller: _companyEmail,
+                                    prefixIcon: Icons.email, // Add email icon
                                   ),
                                   SizedBox(height: 16),
                                   CustomInputField(
@@ -165,6 +214,7 @@ class _LoginPageState extends State<LoginPage> {
                                     hintText: 'Enter your password',
                                     obscureText: true,
                                     controller: _companyPassword,
+                                    prefixIcon: Icons.lock, // Add lock icon
                                   ),
                                   SizedBox(height: 8),
                                   Align(
@@ -178,9 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   SizedBox(height: 16),
                                   ElevatedButton(
-                                    onPressed: () {
-                                      // Handle login logic
-                                    },
+                                    onPressed: _employerSignIn,
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.blue,
                                       foregroundColor: Colors.white,
@@ -230,5 +278,13 @@ class _LoginPageState extends State<LoginPage> {
 void main() {
   runApp(MaterialApp(
     home: LoginPage(),
+    routes: {
+      '/StudentDashboard': (context) => StudentDashboard(
+          ),
+      '/EmployerDashboard': (context) => Scaffold(
+            appBar: AppBar(title: Text('Employer Dashboard')),
+            body: Center(child: Text('Welcome to the Employer Dashboard!')),
+          ),
+    },
   ));
 }

@@ -6,6 +6,7 @@ class CustomInputField extends StatelessWidget {
   final bool obscureText;
   final TextEditingController? controller;
   final TextInputType keyboardType;
+  final IconData? prefixIcon; // Add prefixIcon parameter
 
   const CustomInputField({
     Key? key,
@@ -14,6 +15,7 @@ class CustomInputField extends StatelessWidget {
     this.obscureText = false,
     this.controller,
     this.keyboardType = TextInputType.text,
+    this.prefixIcon, // Initialize prefixIcon
   }) : super(key: key);
 
   @override
@@ -44,6 +46,7 @@ class CustomInputField extends StatelessWidget {
               borderSide: BorderSide(color: Colors.blue, width: 2),
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null, // Add prefixIcon to InputDecoration
           ),
         ),
       ],

@@ -1,14 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:nestern/screens/dashboard.dart';
 import 'package:nestern/screens/employer_signup.dart';
 import 'package:nestern/widgets/custom_input_field.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
 import 'package:nestern/screens/login.dart';
+import 'package:nestern/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:nestern/screens/student/student_dashboard.dart';
 
-class StudentSignUpPage extends StatelessWidget {
+class StudentSignUpPage extends StatefulWidget {
+  @override
+  _StudentSignUpPageState createState() => _StudentSignUpPageState();
+}
+
+class _StudentSignUpPageState extends State<StudentSignUpPage> {
+  
+  final FirebaseAuthService _auth = FirebaseAuthService();
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    super.dispose();
+  }
+  void _signUp() async {
+  String email = emailController.text;
+  String password = passwordController.text;
+  String firstName = firstNameController.text;
+  String lastName = lastNameController.text;
+
+  try {
+    User? user = await _auth.studentSignUpWithEmailAndPassword(email, password);
+    if (user != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign-up successful!')),
+      );
+      Navigator.push(context,MaterialPageRoute(builder: (context) => StudentDashboard()),
+      );
+      
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign-up failed. Please try again.')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: ${e.toString()}')),
+    );
+  }
+}
+  
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +95,7 @@ class StudentSignUpPage extends StatelessWidget {
                       SizedBox(height: 8),
                       // Subtitle
                       Text(
-                        "1,50,000+ companies hiring on Internshala",
+                        "1,50,000+ companies hiring on Nestern",
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey[600],
@@ -55,41 +103,13 @@ class StudentSignUpPage extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 24),
-                      // Google Sign-Up Button
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          // Handle Google Sign-Up
-                        },
-                        icon: Icon(Icons.g_mobiledata, color: Colors.red),
-                        label: Text("Sign up with Google"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          side: BorderSide(color: Colors.grey),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 24),
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      // OR Divider
-                      Row(
-                        children: [
-                          Expanded(child: Divider()),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text("OR"),
-                          ),
-                          Expanded(child: Divider()),
-                        ],
-                      ),
-                      SizedBox(height: 16),
                       // Email Field
                       CustomInputField(
                         labelText: "Email",
                         hintText: "john@example.com",
                         controller: emailController,
                         keyboardType: TextInputType.emailAddress,
+                        prefixIcon: Icons.email, // Add email icon
                       ),
                       SizedBox(height: 16),
                       // Password Field
@@ -98,6 +118,7 @@ class StudentSignUpPage extends StatelessWidget {
                         hintText: "Must be at least 6 characters",
                         controller: passwordController,
                         obscureText: true,
+                        prefixIcon: Icons.lock, // Add lock icon
                       ),
                       SizedBox(height: 16),
                       // First Name and Last Name Fields
@@ -108,6 +129,7 @@ class StudentSignUpPage extends StatelessWidget {
                               labelText: "First Name",
                               hintText: "John",
                               controller: firstNameController,
+                              prefixIcon: Icons.person, // Add person icon
                             ),
                           ),
                           SizedBox(width: 16),
@@ -116,6 +138,7 @@ class StudentSignUpPage extends StatelessWidget {
                               labelText: "Last Name",
                               hintText: "Doe",
                               controller: lastNameController,
+                              prefixIcon: Icons.person_outline, // Add person outline icon
                             ),
                           ),
                         ],
@@ -130,9 +153,7 @@ class StudentSignUpPage extends StatelessWidget {
                       SizedBox(height: 16),
                       // Sign-Up Button
                       ElevatedButton(
-                        onPressed: () {
-                          // Handle Sign-Up Logic
-                        },
+                        onPressed: _signUp,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
@@ -202,20 +223,28 @@ class StudentSignUpPage extends StatelessWidget {
           children: [
             Row(
               children: [
-                screenWidth < 700
-                    ? Text(
-                        'NESTERN',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Dashboard()),
+                    );
+                  },
+                  child: screenWidth < 700
+                      ? Text(
+                          'NESTERN',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
+                        )
+                      : Image.asset(
+                          'assets/main_logo.png',
+                          width: 120, // Smaller logo for larger screens
+                          height: 40,  // Adjust height accordingly
                         ),
-                      )
-                    : Image.asset(
-                        'assets/main_logo.png',
-                        width: 120,
-                        height: 40,
-                      ),
+                ),
                 SizedBox(width: 16),
                 if (screenWidth >= 1260) ...[
                   HoverableDropdown(
@@ -539,6 +568,20 @@ class StudentSignUpPage extends StatelessWidget {
 
 void main() {
   runApp(MaterialApp(
-    home: StudentSignUpPage(),
+    initialRoute: '/',
+    onGenerateRoute: (settings) {
+      switch (settings.name) {
+        case '/':
+          return MaterialPageRoute(builder: (context) => StudentSignUpPage());
+        case '/Dashboard':
+          return MaterialPageRoute(builder: (context) => StudentDashboard());
+        default:
+          return MaterialPageRoute(
+            builder: (context) => Scaffold(
+              body: Center(child: Text('Page not found')),
+            ),
+          );
+      }
+    },
   ));
 }

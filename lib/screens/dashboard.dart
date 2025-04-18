@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nestern/screens/employer/employer_dashboard.dart';
 import 'package:nestern/screens/employer_signup.dart';
+import 'package:nestern/screens/student/student_dashboard.dart';
 import 'package:nestern/screens/student_signup.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
 import 'package:nestern/screens/login.dart';
@@ -96,20 +98,28 @@ class Dashboard extends StatelessWidget {
           Row(
             children: [
               // Logo or Text based on screen width
-              screenWidth < 700
-                  ? Text(
-                      'NESTERN',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Dashboard()),
+                  );
+                },
+                child: screenWidth < 700
+                    ? Text(
+                        'NESTERN',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      )
+                    : Image.asset(
+                        'assets/main_logo.png',
+                        width: 120, // Smaller logo for larger screens
+                        height: 40,  // Adjust height accordingly
                       ),
-                    )
-                  : Image.asset(
-                      'assets/main_logo.png',
-                      width: 120, // Smaller logo for larger screens
-                      height: 40,  // Adjust height accordingly
-                    ),
+              ),
               SizedBox(width: 16), // Space between logo and dropdowns
               if (screenWidth >= 1260) ...[
                 // HoverableDropdowns for larger screens
@@ -173,7 +183,7 @@ class Dashboard extends StatelessWidget {
                   ),
                   child: Text('Login'),
                 ),
-                              SizedBox(width: 8),
+                SizedBox(width: 8),
               if (screenWidth > 767) ...[
                   ElevatedButton(
                     onPressed: () {
@@ -244,11 +254,16 @@ class Dashboard extends StatelessWidget {
                       ),
                     ],
                     onChanged: (value) {
-                      // Handle dropdown selection
                       if (value == 'student') {
-                        // Navigate to student registration
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => StudentSignUpPage()),
+                        );
                       } else if (value == 'employer') {
-                        // Navigate to employer registration
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => EmployerSignUpPage()),
+                        );
                       }
                     },
                     underline: SizedBox(), // Remove the default underline
