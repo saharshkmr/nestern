@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:nestern/screens/dashboard.dart';
+import 'package:nestern/screens/data_science_course.dart';
 import 'package:nestern/screens/employer_signup.dart';
+import 'package:nestern/screens/full_stack_course.dart';
+import 'package:nestern/screens/internship_bangalore.dart';
+import 'package:nestern/screens/internship_delhi.dart';
+import 'package:nestern/screens/internship_mumbai.dart';
+import 'package:nestern/screens/job_banglaore.dart';
+import 'package:nestern/screens/job_delhi.dart';
+import 'package:nestern/screens/job_mumbai.dart';
+import 'package:nestern/screens/ui_ux_design_course.dart';
 import 'package:nestern/widgets/custom_input_field.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
 import 'package:nestern/screens/login.dart';
@@ -204,25 +213,27 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white, // Background color of the header
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 4,
-            offset: Offset(0, 2),
+            color: Colors.black.withOpacity(0.2), // Shadow color
+            spreadRadius: 2, // Spread radius
+            blurRadius: 4, // Blur radius
+            offset: Offset(0, 2), // Offset in the downward direction
           ),
         ],
       ),
       child: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: screenWidth < 1260,
+        elevation: 0, // Remove default AppBar shadow
+        automaticallyImplyLeading: screenWidth < 1260, // Automatically show the drawer icon for small screens
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Logo and HoverableDropdowns grouped together
             Row(
               children: [
+                // Logo or Text based on screen width
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -242,54 +253,106 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
                       : Image.asset(
                           'assets/main_logo.png',
                           width: 120, // Smaller logo for larger screens
-                          height: 40,  // Adjust height accordingly
+                          height: 40, // Adjust height accordingly
                         ),
                 ),
-                SizedBox(width: 16),
+                SizedBox(width: 16), // Space between logo and dropdowns
                 if (screenWidth >= 1260) ...[
+                  // HoverableDropdowns for larger screens
                   HoverableDropdown(
                     title: 'Internships',
                     items: [
                       PopupMenuItem(
-                          value: 'Internship in India',
-                          child: Text('Internship in India')),
+                        value: 'Internship in Delhi',
+                        child: Text('Internship in Delhi'),
+                      ),
                       PopupMenuItem(
-                          value: 'Internship in Delhi',
-                          child: Text('Internship in Delhi')),
+                        value: 'Internship in Mumbai',
+                        child: Text('Internship in Mumbai'),
+                      ),
                       PopupMenuItem(
-                          value: 'Internship in Bangalore',
-                          child: Text('Internship in Bangalore')),
+                        value: 'Internship in Bangalore',
+                        child: Text('Internship in Bangalore'),
+                      ),
                     ],
+                    onSelected: (value) {
+                      if (value == 'Internship in Delhi') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => InternshipPageDelhi()),
+                        );
+                      } else if (value == 'Internship in Mumbai') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => InternshipPageMumbai()),
+                        );
+                      } else if (value == 'Internship in Bangalore') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => InternshipPageBangalore()),
+                        );
+                      }
+                    },
                   ),
                   SizedBox(width: 16),
+                  if (screenWidth >= 1260) ...[
+                  // HoverableDropdowns for larger screens
                   HoverableDropdown(
                     title: 'Jobs',
                     items: [
                       PopupMenuItem(
-                          value: 'Jobs in Delhi', child: Text('Jobs in Delhi')),
+                        value: 'Jobs in Delhi',
+                        child: Text('Jobs in Delhi'),
+                      ),
                       PopupMenuItem(
-                          value: 'Jobs in Mumbai',
-                          child: Text('Jobs in Mumbai')),
+                        value: 'Jobs in Mumbai',
+                        child: Text('Jobs in Mumbai'),
+                      ),
                       PopupMenuItem(
-                          value: 'Jobs in Bangalore',
-                          child: Text('Jobs in Bangalore')),
+                        value: 'Jobs in Bangalore',
+                        child: Text('Jobs in Bangalore'),
+                      ),
                     ],
+                    onSelected: (value) {
+                      if (value == 'Jobs in Delhi') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => JobPageDelhi()),
+                        );
+                      } else if (value == 'Jobs in Mumbai') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => JobPageMumbai()),
+                        );
+                      } else if (value == 'Jobs in Bangalore') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => JobPageBangalore()),
+                        );
+                      }
+                    },
                   ),
                   SizedBox(width: 16),
+                  if (screenWidth >= 1260) ...[
+                  // HoverableDropdowns for larger screens
                   HoverableDropdown(
                     title: 'Courses',
                     items: [
                       PopupMenuItem(
-                          value: 'Full Stack Development',
-                          child: Text('Full Stack Development')),
+                        value: 'Full Stack Development',
+                        child: Text('Full Stack Development'),
+                      ),
                       PopupMenuItem(
-                          value: 'Data Science', child: Text('Data Science')),
+                        value: 'Data Science',
+                        child: Text('Data Science'),
+                      ),
                       PopupMenuItem(
-                          value: 'UI/UX Design', child: Text('UI/UX Design')),
+                        value: 'UI/UX Design',
+                        child: Text('UI/UX Design'),
+                      ),
                     ],
                     badge: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                       decoration: BoxDecoration(
                         color: Colors.orange,
                         borderRadius: BorderRadius.circular(4),
@@ -299,37 +362,57 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
                         style: TextStyle(color: Colors.white, fontSize: 10),
                       ),
                     ),
+                    onSelected: (value) {
+                      if (value == 'Full Stack Development') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => FullStackCoursePage()),
+                        );
+                      } else if (value == 'Data Science') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => DataScienceCoursePage()),
+                        );
+                      } else if (value == 'UI/UX Design') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => UIUXDesignCoursePage()),
+                        );
+                      }
+                    },
                   ),
                 ],
               ],
-            ),
+            ]
+          ]
+          ),
+            // Buttons for larger screens
             Row(
-              children: [
-                if (screenWidth > 991)
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.blue,
-                      side: BorderSide(color: Colors.blue),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
+            children: [
+              if (screenWidth > 991) // Show Login button only if screen width > 991
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                    side: BorderSide(color: Colors.blue),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Text('Login'),
                   ),
+                  child: Text('Login'),
+                ),
                 SizedBox(width: 8),
-                if (screenWidth > 767) ...[
+              if (screenWidth > 767) ...[
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => StudentSignUpPage()),
+                        MaterialPageRoute(builder: (context) => StudentSignUpPage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -342,32 +425,81 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
                     ),
                     child: Text('Candidate Sign-up'),
                   ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
+                SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => EmployerSignUpPage()),
+                        MaterialPageRoute(builder: (context) => EmployerSignUpPage()),
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  child: Text('Employer Sign-up'),
+                ),
+              ] else ...[
+                  Container(
+                    height: 40, // Set the height of the box
+                    decoration: BoxDecoration(
+                    color: Colors.blue, // Set the background color of the button to blue
+                    borderRadius: BorderRadius.circular(4), // Optional: Add rounded corners
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Adjust padding to match HoverableDropdown
+                  child: DropdownButton<String>(
+                    hint: Text(
+                      'Register',
+                      style: TextStyle(
+                        color: Colors.white, // Set the text color to white for contrast
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14, // Adjust font size to match HoverableDropdown
                       ),
                     ),
-                    child: Text('Employer Sign-up'),
+                    icon: Icon(Icons.arrow_drop_down, color: Colors.white, size: 20), // Adjust icon size to match HoverableDropdown
+                    items: [
+                      DropdownMenuItem(
+                        value: 'student',
+                        child: Text(
+                          'As a Student',
+                          style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 14), // Adjust text size for dropdown items
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'employer',
+                        child: Text(
+                          'As an Employer',
+                          style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 14), // Adjust text size for dropdown items
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value == 'student') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => StudentSignUpPage()),
+                        );
+                      } else if (value == 'employer') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => EmployerSignUpPage()),
+                        );
+                      }
+                    },
+                    underline: SizedBox(), // Remove the default underline
                   ),
-                ],
+                ),
               ],
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   // Footer Widget
 //   Widget _buildFooter() {

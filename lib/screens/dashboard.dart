@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nestern/screens/contact_us.dart';
 import 'package:nestern/screens/data_science_course.dart';
-import 'package:nestern/screens/employer/employer_dashboard.dart';
+// import 'package:nestern/screens/employer/employer_dashboard.dart';
 import 'package:nestern/screens/employer_signup.dart';
 import 'package:nestern/screens/full_stack_course.dart';
 import 'package:nestern/screens/internship_delhi.dart';
@@ -12,7 +12,7 @@ import 'package:nestern/screens/job_banglaore.dart';
 import 'package:nestern/screens/job_delhi.dart';
 import 'package:nestern/screens/job_mumbai.dart';
 import 'package:nestern/screens/jobs.dart';
-import 'package:nestern/screens/student/student_dashboard.dart';
+// import 'package:nestern/screens/student/student_dashboard.dart';
 import 'package:nestern/screens/student_signup.dart';
 import 'package:nestern/screens/ui_ux_design_course.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
@@ -267,22 +267,22 @@ Widget build(BuildContext context) {
   );
 }
 
-  Widget _buildCategoryChip(String label, {bool isSelected = false}) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    decoration: BoxDecoration(
-      color: isSelected ? Colors.blue : Colors.grey[200],
-      borderRadius: BorderRadius.circular(16),
-    ),
-    child: Text(
-      label,
-      style: TextStyle(
-        color: isSelected ? Colors.white : Colors.black,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  );
-}
+//   Widget _buildCategoryChip(String label, {bool isSelected = false}) {
+//   return Container(
+//     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+//     decoration: BoxDecoration(
+//       color: isSelected ? Colors.blue : Colors.grey[200],
+//       borderRadius: BorderRadius.circular(16),
+//     ),
+//     child: Text(
+//       label,
+//       style: TextStyle(
+//         color: isSelected ? Colors.white : Colors.black,
+//         fontWeight: FontWeight.bold,
+//       ),
+//     ),
+//   );
+// }
 
   // Header Widget
   Widget _buildHeader(BuildContext context) {
@@ -465,26 +465,26 @@ Widget build(BuildContext context) {
           ),
             // Buttons for larger screens
             Row(
-              children: [
-                if (screenWidth > 991) // Show Login button only if screen width > 991
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.blue,
-                      side: BorderSide(color: Colors.blue),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
+            children: [
+              if (screenWidth > 991) // Show Login button only if screen width > 991
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                    side: BorderSide(color: Colors.blue),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Text('Login'),
                   ),
+                  child: Text('Login'),
+                ),
                 SizedBox(width: 8),
-                if (screenWidth > 767) ...[
+              if (screenWidth > 767) ...[
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -502,32 +502,81 @@ Widget build(BuildContext context) {
                     ),
                     child: Text('Candidate Sign-up'),
                   ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
+                SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => EmployerSignUpPage()),
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  child: Text('Employer Sign-up'),
+                ),
+              ] else ...[
+                  Container(
+                    height: 40, // Set the height of the box
+                    decoration: BoxDecoration(
+                    color: Colors.blue, // Set the background color of the button to blue
+                    borderRadius: BorderRadius.circular(4), // Optional: Add rounded corners
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Adjust padding to match HoverableDropdown
+                  child: DropdownButton<String>(
+                    hint: Text(
+                      'Register',
+                      style: TextStyle(
+                        color: Colors.white, // Set the text color to white for contrast
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14, // Adjust font size to match HoverableDropdown
                       ),
                     ),
-                    child: Text('Employer Sign-up'),
+                    icon: Icon(Icons.arrow_drop_down, color: Colors.white, size: 20), // Adjust icon size to match HoverableDropdown
+                    items: [
+                      DropdownMenuItem(
+                        value: 'student',
+                        child: Text(
+                          'As a Student',
+                          style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 14), // Adjust text size for dropdown items
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'employer',
+                        child: Text(
+                          'As an Employer',
+                          style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 14), // Adjust text size for dropdown items
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value == 'student') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => StudentSignUpPage()),
+                        );
+                      } else if (value == 'employer') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => EmployerSignUpPage()),
+                        );
+                      }
+                    },
+                    underline: SizedBox(), // Remove the default underline
                   ),
-                ],
+                ),
               ],
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
-    );
-  }
-
+    ),
+  );
+}
   // Footer Widget
 //   Widget _buildFooter() {
 //   return LayoutBuilder(
