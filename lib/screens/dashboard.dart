@@ -18,6 +18,7 @@ import 'package:nestern/screens/ui_ux_design_course.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
 import 'package:nestern/screens/login.dart';
 import 'package:nestern/widgets/internship_card.dart';
+import 'package:nestern/widgets/job__card.dart';
 import 'package:nestern/widgets/trending_card.dart'; // Import the TrendingSection widget
 
 class Dashboard extends StatelessWidget {
@@ -61,46 +62,6 @@ Widget build(BuildContext context) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => JobsPage()),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.school),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Certification Courses'),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.orange, // Background color for the badge
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    'OFFER',
-                    style: TextStyle(
-                      color: Colors.white, // Text color
-                      fontSize: 10, // Font size for the badge text
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.business),
-            title: Text('Placement Garantee Courses'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
               );
             },
           ),
@@ -177,12 +138,14 @@ Widget build(BuildContext context) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Latest internships on Nestern",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+              Center(
+                child: Text(
+                  "Latest internships on Nestern",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               SizedBox(height: 8),
@@ -256,6 +219,113 @@ Widget build(BuildContext context) {
                   ],
                 ),
               ),
+              SizedBox(height: 40),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                          child: Text(
+                            "Latest jobs on Nestern",
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                  SizedBox(height: 8),
+                  // Popular Categories
+                  Center(
+  child: SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center, // Center the chips
+      children: [
+        _buildCategoryChip("Big brands", isSelected: true, onTap: () {
+          // Handle click for "Big brands"
+          print("Big brands clicked");
+        }),
+        SizedBox(width: 8),
+        _buildCategoryChip("Work from home", onTap: () {
+          // Handle click for "Work from home"
+          print("Work from home clicked");
+        }),
+        SizedBox(width: 8),
+        _buildCategoryChip("Part-time", onTap: () {
+          // Handle click for "Part-time"
+          print("Part-time clicked");
+        }),
+        SizedBox(width: 8),
+        _buildCategoryChip("MBA", onTap: () {
+          // Handle click for "MBA"
+          print("MBA clicked");
+        }),
+        SizedBox(width: 8),
+        _buildCategoryChip("Engineering", onTap: () {
+          // Handle click for "Engineering"
+          print("Engineering clicked");
+        }),
+        SizedBox(width: 8),
+        _buildCategoryChip("Media", onTap: () {
+          // Handle click for "Media"
+          print("Media clicked");
+        }),
+        SizedBox(width: 8),
+        _buildCategoryChip("Design", onTap: () {
+          // Handle click for "Design"
+          print("Design clicked");
+        }),
+        SizedBox(width: 8),
+        _buildCategoryChip("Data Science", onTap: () {
+          // Handle click for "Data Science"
+          print("Data Science clicked");
+        }),
+      ],
+    ),
+  ),
+),
+                  SizedBox(height: 16),
+                  // Job Cards
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        JobCard(
+                          title: "Subject Matter Expert",
+                          company: "CollegeDekho.com",
+                          location: "Jaipur",
+                          salary: "₹ 3,00,000 - 4,00,000 /year",
+                          isActivelyHiring: true,
+                        ),
+                        SizedBox(width: 16),
+                        JobCard(
+                          title: "Inside Sales Associate",
+                          company: "PlanetSpark",
+                          location: "Delhi, Gurgaon, Noida",
+                          salary: "₹ 6,50,000 - 7,50,000 /year",
+                          isActivelyHiring: true,
+                        ),
+                        SizedBox(width: 16),
+                        JobCard(
+                          title: "Corporate Sales Associate",
+                          company: "PlanetSpark",
+                          location: "Chennai, Hyderabad, Bangalore",
+                          salary: "₹ 6,50,000 - 7,50,000 /year",
+                          isActivelyHiring: true,
+                        ),
+                        SizedBox(width: 16),
+                        JobCard(
+                          title: "Research Associate (Finance)",
+                          company: "Netscribes (India) Private Limited",
+                          location: "Kolkata (Hybrid)",
+                          salary: "₹ 2,00,000 - 2,25,000 /year",
+                          isActivelyHiring: true,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -267,22 +337,25 @@ Widget build(BuildContext context) {
   );
 }
 
-//   Widget _buildCategoryChip(String label, {bool isSelected = false}) {
-//   return Container(
-//     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-//     decoration: BoxDecoration(
-//       color: isSelected ? Colors.blue : Colors.grey[200],
-//       borderRadius: BorderRadius.circular(16),
-//     ),
-//     child: Text(
-//       label,
-//       style: TextStyle(
-//         color: isSelected ? Colors.white : Colors.black,
-//         fontWeight: FontWeight.bold,
-//       ),
-//     ),
-//   );
-// }
+  Widget _buildCategoryChip(String label, {bool isSelected = false, VoidCallback? onTap}) {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    decoration: BoxDecoration(
+      color: isSelected ? Colors.blue : Colors.grey[200],
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: GestureDetector(
+      onTap: onTap,
+      child: Text(
+        label,
+        style: TextStyle(
+          color: isSelected ? Colors.white : Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  );
+}
 
   // Header Widget
   Widget _buildHeader(BuildContext context) {
@@ -731,7 +804,7 @@ Widget build(BuildContext context) {
 //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                 children: [
 //                   Text(
-//                     '© Copyright 2025 Internshala',
+//                     '© Copyright 2025 Nestern',
 //                     style: TextStyle(color: Colors.white),
 //                   ),
 //                   Row(

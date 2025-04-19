@@ -148,19 +148,19 @@ class ContactUsPage extends StatelessWidget {
             SizedBox(height: 8),
             _buildContactInfo(
               title: 'University/college associations',
-              email: 'university.relations@internshala.com',
+              email: 'university.relations@nestern.com',
             ),
             _buildContactInfo(
               title: 'Media queries',
-              email: 'pr@internshala.com',
+              email: 'pr@nestern.com',
             ),
             _buildContactInfo(
               title: 'Fest sponsorships',
-              email: 'pr@internshala.com',
+              email: 'pr@nestern.com',
             ),
             _buildContactInfo(
               title: 'For everything else',
-              email: 'sarvesh@internshala.com',
+              email: 'sarvesh@nestern.com',
             ),
             SizedBox(height: 24),
             // Address Section
@@ -173,7 +173,7 @@ class ContactUsPage extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              'Scholiverse Educare Pvt. Ltd. 901A/B, Iris Tech Park, Sector 48, Gurugram, Haryana, India - 122018',
+              'Sarla Birla university campus, Tatisilvae, Jharkhand 835103',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[700],
@@ -185,7 +185,7 @@ class ContactUsPage extends StatelessWidget {
                 Icon(Icons.location_on, color: Colors.red, size: 24),
                 SizedBox(width: 8),
                 Text(
-                  'Working Hours: Monday to Friday, 10:00 AM – 6:00 PM',
+                  'Working Hours: Monday to Friday, 09:00 AM – 05:00 PM',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[700],

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:nestern/screens/employer/employer_dashboard.dart';
 import 'package:nestern/screens/employer_signup.dart';
-import 'package:nestern/screens/student/student_dashboard.dart';
+import 'package:nestern/screens/student/profile_page.dart';
+// import 'package:nestern/screens/student/student_dashboard.dart';
 import 'package:nestern/screens/student_signup.dart';
 import 'package:nestern/widgets/custom_input_field.dart'; // Import the reusable input field
 import 'package:nestern/services/auth_service.dart'; // Import FirebaseAuthService
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth for User class
 import 'package:flutter/gestures.dart'; // Import for TapGestureRecognizer
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nestern/screens/student/profile_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -41,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
         SnackBar(content: Text('Student Login successful!')),
       );
       // Navigate to StudentDashboard using MaterialPageRoute
-      Navigator.push(context,MaterialPageRoute(builder: (context) => StudentDashboard()),
+      Navigator.push(context,MaterialPageRoute(builder: (context) => ProfilePage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -279,7 +282,7 @@ void main() {
   runApp(MaterialApp(
     home: LoginPage(),
     routes: {
-      '/StudentDashboard': (context) => StudentDashboard(
+      '/StudentDashboard': (context) => ProfilePage(
           ),
       '/EmployerDashboard': (context) => Scaffold(
             appBar: AppBar(title: Text('Employer Dashboard')),

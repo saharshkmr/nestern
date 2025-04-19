@@ -38,13 +38,13 @@ class StudentInternshipHelpcenter extends StatelessWidget {
                   _buildHelpOptionCard(
                     icon: Icons.person,
                     title: 'Account / Profile',
-                    description: 'Manage your Internshala account',
+                    description: 'Manage your Nestern account',
                   ),
                   _buildHelpOptionCard(
                     icon: Icons.search,
                     title: 'Find Internships & Jobs',
                     description:
-                        'Find internships and jobs matching your preferences on Internshala',
+                        'Find internships and jobs matching your preferences on Nestern',
                   ),
                   _buildHelpOptionCard(
                     icon: Icons.file_copy,

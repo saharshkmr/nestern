@@ -9,6 +9,7 @@ import 'package:nestern/screens/internship_mumbai.dart';
 import 'package:nestern/screens/job_banglaore.dart';
 import 'package:nestern/screens/job_delhi.dart';
 import 'package:nestern/screens/job_mumbai.dart';
+import 'package:nestern/screens/student/profile_page.dart';
 import 'package:nestern/screens/ui_ux_design_course.dart';
 import 'package:nestern/widgets/custom_input_field.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
@@ -51,7 +52,7 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Sign-up successful!')),
       );
-      Navigator.push(context,MaterialPageRoute(builder: (context) => StudentDashboard()),
+      Navigator.push(context,MaterialPageRoute(builder: (context) => ProfilePage()),
       );
       
     } else {
@@ -655,7 +656,7 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
 //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                 children: [
 //                   Text(
-//                     '© Copyright 2025 Internshala',
+//                     '© Copyright 2025 Nestern',
 //                     style: TextStyle(color: Colors.white),
 //                   ),
 //                   Row(
@@ -706,7 +707,7 @@ void main() {
         case '/':
           return MaterialPageRoute(builder: (context) => StudentSignUpPage());
         case '/Dashboard':
-          return MaterialPageRoute(builder: (context) => StudentDashboard());
+          return MaterialPageRoute(builder: (context) => ProfilePage());
         default:
           return MaterialPageRoute(
             builder: (context) => Scaffold(

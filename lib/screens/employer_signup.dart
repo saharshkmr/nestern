@@ -509,7 +509,7 @@ Widget build(BuildContext context) {
   //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
   //                 children: [
   //                   Text(
-  //                     '© Copyright 2025 Internshala',
+  //                     '© Copyright 2025 Nestern',
   //                     style: TextStyle(color: Colors.white),
   //                   ),
   //                   Row(

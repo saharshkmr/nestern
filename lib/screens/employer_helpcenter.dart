@@ -43,9 +43,9 @@ class _EmployerHelpCenterPageState extends State<EmployerHelpCenterPage> {
                 children: [
                   _buildQuestionItem(
                     index: 0,
-                    question: 'How do I hire interns/freshers using Internshala?',
+                    question: 'How do I hire interns/freshers using Nestern ?',
                     answer:
-                        'To hire interns or freshers, you can post your requirements on Internshala and review applications from candidates.',
+                        'To hire interns or freshers, you can post your requirements on Nestern and review applications from candidates.',
                   ),
                   _buildQuestionItem(
                     index: 1,
@@ -64,14 +64,14 @@ class _EmployerHelpCenterPageState extends State<EmployerHelpCenterPage> {
                   _buildQuestionItem(
                     index: 3,
                     question:
-                        'Can I find candidates with prior work experience on Internshala?',
+                        'Can I find candidates with prior work experience on Nestern ?',
                     answer:
                         'Yes, you can find candidates with prior work experience by specifying your requirements in the job posting.',
                   ),
                   _buildQuestionItem(
                     index: 4,
                     question:
-                        'Is there any criteria of a minimum stipend/CTC to post internships/jobs on Internshala?',
+                        'Is there any criteria of a minimum stipend/CTC to post internships/jobs on Nestern ?',
                     answer:
                         'Yes, there are minimum stipend/CTC requirements to ensure fair compensation for candidates.',
                   ),

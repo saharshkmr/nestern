@@ -50,6 +50,8 @@ dev_dependencies:
   firebase_auth: ^5.4.1
   cloud_firestore: ^5.6.2
   google_sign_in: ^6.1.0
+  shared_preferences: ^2.0.15
+  webview_flutter: ^4.0.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

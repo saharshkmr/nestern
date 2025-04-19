@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:nestern/screens/employer/post.dart';
+import 'package:nestern/screens/employer/profile.dart'; // Import the EmployerProfilePage
 
 class EmployerDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  automaticallyImplyLeading: false, // Removes the back button
-  backgroundColor: Colors.white,
-  elevation: 1,
-  title: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
+        automaticallyImplyLeading: false, // Removes the back button
+        backgroundColor: Colors.white,
+        elevation: 1,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
             Image.asset(
               'assets/main_logo.png', // Replace with your logo asset
               width: 120,
@@ -18,16 +20,6 @@ class EmployerDashboard extends StatelessWidget {
             ),
             Row(
               children: [
-                TextButton(
-                  onPressed: () {
-                    // Navigate to Plans and Pricing
-                  },
-                  child: Text(
-                    "Plans and Pricing",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                SizedBox(width: 16),
                 TextButton(
                   onPressed: () {
                     // Navigate to Dashboard
@@ -40,7 +32,10 @@ class EmployerDashboard extends StatelessWidget {
                 SizedBox(width: 16),
                 TextButton(
                   onPressed: () {
-                    // Navigate to Post Internship/Job
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PostPage()),
+                    );
                   },
                   child: Text(
                     "Post Internship/Job",
@@ -48,7 +43,16 @@ class EmployerDashboard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 16),
-                Icon(Icons.account_circle, color: Colors.black),
+                IconButton(
+                  icon: Icon(Icons.account_circle, color: Colors.black),
+                  onPressed: () {
+                    // Navigate to EmployerProfilePage
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => EmployerProfilePage()),
+                    );
+                  },
+                ),
               ],
             ),
           ],
