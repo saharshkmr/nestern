@@ -13,6 +13,7 @@ import 'package:nestern/screens/job_banglaore.dart';
 import 'package:nestern/screens/job_delhi.dart';
 import 'package:nestern/screens/job_mumbai.dart';
 import 'package:nestern/screens/jobs.dart';
+import 'package:nestern/screens/student/profile_page.dart';
 // import 'package:nestern/screens/student/student_dashboard.dart';
 import 'package:nestern/screens/student_signup.dart';
 import 'package:nestern/screens/ui_ux_design_course.dart';
@@ -67,46 +68,6 @@ Widget build(BuildContext context) {
             },
           ),
           ListTile(
-            leading: Icon(Icons.school),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Certification Courses'),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.orange, // Background color for the badge
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    'OFFER',
-                    style: TextStyle(
-                      color: Colors.white, // Text color
-                      fontSize: 10, // Font size for the badge text
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.business),
-            title: Text('Placement Garantee Courses'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
-            },
-          ),
-          ListTile(
             leading: Icon(Icons.contact_mail),
             title: Text('Contact Us'),
             onTap: () {
@@ -119,31 +80,11 @@ Widget build(BuildContext context) {
           Divider(color: Colors.grey),
           ListTile(
             leading: Icon(Icons.account_circle),
-            title: Text('Register - As a Student'),
+            title: Text('Logout'),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => StudentSignUpPage()),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.account_circle),
-            title: Text('Register - As an Employer'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => EmployerSignUpPage()),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.account_circle),
-            title: Text('Login'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
+                MaterialPageRoute(builder: (context) => Dashboard()),
               );
             },
           ),
@@ -277,54 +218,54 @@ Widget build(BuildContext context) {
                   SizedBox(height: 8),
                   // Popular Categories
                   Center(
-  child: SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center, // Center the chips
-      children: [
-        _buildCategoryChip("Big brands", isSelected: true, onTap: () {
-          // Handle click for "Big brands"
-          print("Big brands clicked");
-        }),
-        SizedBox(width: 8),
-        _buildCategoryChip("Work from home", onTap: () {
-          // Handle click for "Work from home"
-          print("Work from home clicked");
-        }),
-        SizedBox(width: 8),
-        _buildCategoryChip("Part-time", onTap: () {
-          // Handle click for "Part-time"
-          print("Part-time clicked");
-        }),
-        SizedBox(width: 8),
-        _buildCategoryChip("MBA", onTap: () {
-          // Handle click for "MBA"
-          print("MBA clicked");
-        }),
-        SizedBox(width: 8),
-        _buildCategoryChip("Engineering", onTap: () {
-          // Handle click for "Engineering"
-          print("Engineering clicked");
-        }),
-        SizedBox(width: 8),
-        _buildCategoryChip("Media", onTap: () {
-          // Handle click for "Media"
-          print("Media clicked");
-        }),
-        SizedBox(width: 8),
-        _buildCategoryChip("Design", onTap: () {
-          // Handle click for "Design"
-          print("Design clicked");
-        }),
-        SizedBox(width: 8),
-        _buildCategoryChip("Data Science", onTap: () {
-          // Handle click for "Data Science"
-          print("Data Science clicked");
-        }),
-      ],
-    ),
-  ),
-),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center, // Center the chips
+                        children: [
+                          _buildCategoryChip("Big brands", isSelected: true, onTap: () {
+                            // Handle click for "Big brands"
+                            print("Big brands clicked");
+                          }),
+                          SizedBox(width: 8),
+                          _buildCategoryChip("Work from home", onTap: () {
+                            // Handle click for "Work from home"
+                            print("Work from home clicked");
+                          }),
+                          SizedBox(width: 8),
+                          _buildCategoryChip("Part-time", onTap: () {
+                            // Handle click for "Part-time"
+                            print("Part-time clicked");
+                          }),
+                          SizedBox(width: 8),
+                          _buildCategoryChip("MBA", onTap: () {
+                            // Handle click for "MBA"
+                            print("MBA clicked");
+                          }),
+                          SizedBox(width: 8),
+                          _buildCategoryChip("Engineering", onTap: () {
+                            // Handle click for "Engineering"
+                            print("Engineering clicked");
+                          }),
+                          SizedBox(width: 8),
+                          _buildCategoryChip("Media", onTap: () {
+                            // Handle click for "Media"
+                            print("Media clicked");
+                          }),
+                          SizedBox(width: 8),
+                          _buildCategoryChip("Design", onTap: () {
+                            // Handle click for "Design"
+                            print("Design clicked");
+                          }),
+                          SizedBox(width: 8),
+                          _buildCategoryChip("Data Science", onTap: () {
+                            // Handle click for "Data Science"
+                            print("Data Science clicked");
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
                   SizedBox(height: 16),
                   // Job Cards
                   SingleChildScrollView(
@@ -580,25 +521,43 @@ Widget build(BuildContext context) {
             // Buttons for larger screens
             Row(
               children: [
-                TextButton(
+                SizedBox(width: 16), // Space between search bar and icons
+                IconButton(
+                  icon: Icon(Icons.notifications, color: Colors.black),
+                  onPressed: () {
+                    
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('No new notifications')),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.account_circle, color: Colors.black),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Dashboard()),
+                      MaterialPageRoute(builder: (context) => ProfilePage()),
                     );
                   },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.blue,
-                    side: BorderSide(color: Colors.blue),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  child: Text('Logout'),
                 ),
-                SizedBox(width: 8),
+                TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Dashboard()),
+                  );
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                  side: BorderSide(color: Colors.blue),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                child: Text('Logout'),
+              ),
               ],
-          ),
+            ),
         ],
       ),
     ),

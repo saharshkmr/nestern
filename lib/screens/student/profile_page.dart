@@ -374,17 +374,17 @@ class ProfilePage extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.account_circle, color: Colors.black),
                   onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()),
-                );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProfilePage()),
+                    );
                   },
                 ),
                 TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()),
+                    MaterialPageRoute(builder: (context) => Dashboard()),
                   );
                 },
                 style: TextButton.styleFrom(

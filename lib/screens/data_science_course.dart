@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nestern/widgets/custom_input_field.dart';
+import 'package:nestern/widgets/date_widget.dart';
 
 class DataScienceCoursePage extends StatelessWidget {
   const DataScienceCoursePage({Key? key}) : super(key: key);
@@ -166,9 +168,9 @@ class DataScienceCoursePage extends StatelessWidget {
                       SizedBox(height: 16),
                       Row(
                         children: [
-                          Expanded(child: _buildDropdown('Education')),
+                          Expanded(child: buildDateField(context, 'Education', TextEditingController(), () {})),
                           SizedBox(width: 16),
-                          Expanded(child: _buildDropdown('Graduation Year')),
+                          Expanded(child: buildDateField(context, 'Date of Birth', TextEditingController(), () {})),
                         ],
                       ),
                       SizedBox(height: 16),
@@ -323,19 +325,6 @@ class DataScienceCoursePage extends StatelessWidget {
     );
   }
 
-  // Helper method to build dropdowns
-  Widget _buildDropdown(String hintText) {
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        hintText: hintText,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      items: [],
-      onChanged: (value) {},
-    );
-  }
 
   // Helper method to build review cards
   Widget _buildReviewCard({
