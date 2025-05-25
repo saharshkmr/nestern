@@ -210,10 +210,19 @@ class Saved extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()),
-                    );
+                    // TODO: Replace the following with your actual user object retrieval logic
+                    var appUser; // Define or fetch the appUser variable here
+
+                    if (appUser != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ProfilePage(user: appUser)),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('User data not loaded yet')),
+                      );
+                    }
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.blue,

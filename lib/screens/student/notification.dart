@@ -12,6 +12,8 @@ import 'package:nestern/screens/ui_ux_design_course.dart';
 import 'package:nestern/screens/internships.dart';
 import 'package:nestern/screens/student/profile_page.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
+import 'package:nestern/models/user.dart'; // Make sure this path matches where AppUser is defined
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Notification extends StatelessWidget {
   final List<String> applications = []; // Replace with your dynamic data source
@@ -210,10 +212,16 @@ class Notification extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()),
-                    );
+                    // if (appUser != null) {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(builder: (context) => ProfilePage(user: appUser!)),
+                    //   );
+                    // } else {
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     SnackBar(content: Text('User data not loaded yet')),
+                    //   );
+                    // }
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.blue,
@@ -259,4 +267,5 @@ class Notification extends StatelessWidget {
             ),
     );
   }
+
 }

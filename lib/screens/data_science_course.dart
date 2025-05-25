@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nestern/widgets/custom_input_field.dart';
+import 'package:nestern/widgets/input_widget.dart';
 import 'package:nestern/widgets/date_widget.dart';
 
 class DataScienceCoursePage extends StatelessWidget {

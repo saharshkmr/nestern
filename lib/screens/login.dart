@@ -4,12 +4,37 @@ import 'package:nestern/screens/employer_signup.dart';
 import 'package:nestern/screens/student/profile_page.dart';
 // import 'package:nestern/screens/student/student_dashboard.dart';
 import 'package:nestern/screens/student_signup.dart';
-import 'package:nestern/widgets/custom_input_field.dart'; // Import the reusable input field
+import 'package:nestern/widgets/input_widget.dart'; // Import the reusable input field
 import 'package:nestern/services/auth_service.dart'; // Import FirebaseAuthService
-import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth for User class
+import 'package:firebase_auth/firebase_auth.dart' as fb_auth; // Import FirebaseAuth for User class
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:flutter/gestures.dart'; // Import for TapGestureRecognizer
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nestern/screens/student/profile_page.dart';
+import 'package:nestern/models/user.dart' as my_model;
+
+
+// Define AppUser class with a fromFirebaseUser factory
+class User {
+  final String uid;
+  final String? email;
+
+  User({required this.uid, this.email});
+
+  factory User.fromFirebaseUser(User user) {
+    return User(
+      uid: user.uid,
+      email: user.email,
+    );
+  }
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      uid: json['id'] ?? json['uid'] ?? '',
+      email: json['email'],
+    );
+  }
+}
 
 class LoginPage extends StatefulWidget {
   @override
@@ -33,18 +58,149 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _studentSignIn() async {
+  // void _studentSignIn() async {
+  //   String email = _studentEmail.text;
+  //   String password = _studentPassword.text;
+
+  //   try {
+  //     User? user = await _auth.studentSignInWithEmailAndPassword(email, password);
+  //     if (user != null) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Student Login successful!')),
+  //       );
+  //       // Navigate to StudentDashboard using MaterialPageRoute
+  //       // Convert Firebase User to your app's User model before passing
+  //       final user = User.fromFirebaseUser(User); // Avoid variable shadowing
+  //       Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(user: user)),
+  //       );
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Student Login failed. Please try again.')),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Error: ${e.toString()}')),
+  //     );
+  //   }
+  // }
+
+  // // Employer Sign-In Method
+  // void _employerSignIn() async {
+  //   String email = _companyEmail.text;
+  //   String password = _companyPassword.text;
+
+  //   try {
+  //     User? user = await _auth.employerSignInWithEmailAndPassword(email, password);
+  //     if (user != null) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Employer Login successful!')),
+  //       );
+  //       Navigator.push(context,MaterialPageRoute(builder: (context) => EmployerDashboard()),
+  //        ); // Navigate to Employer Dashboard
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Employer Login failed. Please try again.')),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Error: ${e.toString()}')),
+  //     );
+  //   }
+  // }
+
+//   void _studentSignIn() async {
+//   String email = _studentEmail.text;
+//   String password = _studentPassword.text;
+
+//   try {
+//     fb_auth.User? firebaseUser = await _auth.studentSignInWithEmailAndPassword(email, password);
+//     if (firebaseUser != null) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Student Login successful!')),
+//       );
+
+//       // Assuming you want to fetch full user data from Firestore
+//       final userDoc = await FirebaseFirestore.instance
+//           .collection('users')
+//           .doc(firebaseUser.uid)
+//           .get();
+
+//       final user = User.fromJson(userDoc.data()!..putIfAbsent('id', () => userDoc.id));
+
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(builder: (context) => ProfilePage(user: user)),
+//       );
+//     } else {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Student Login failed. Please try again.')),
+//       );
+//     }
+//   } catch (e) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text('Error: ${e.toString()}')),
+//     );
+//   }
+// }
+
+//   void _employerSignIn() async {
+//   String email = _companyEmail.text;
+//   String password = _companyPassword.text;
+
+//   try {
+//     fb_auth.User? firebaseUser = await _auth.employerSignInWithEmailAndPassword(email, password);
+//     if (firebaseUser != null) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Employer Login successful!')),
+//       );
+
+//       // Assuming you want to fetch full user data from Firestore
+//       final userDoc = await FirebaseFirestore.instance
+//           .collection('users')
+//           .doc(firebaseUser.uid)
+//           .get();
+
+//       final user = User.fromJson(userDoc.data()!..putIfAbsent('id', () => userDoc.id));
+
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(builder: (context) => ProfilePage(user: user)),
+//       );
+//     } else {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Student Login failed. Please try again.')),
+//       );
+//     }
+//   } catch (e) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text('Error: ${e.toString()}')),
+//     );
+//   }
+// }
+
+void _studentSignIn() async {
   String email = _studentEmail.text;
   String password = _studentPassword.text;
 
   try {
-    User? user = await _auth.studentSignInWithEmailAndPassword(email, password);
-    if (user != null) {
+    fb_auth.User? firebaseUser = await _auth.studentSignInWithEmailAndPassword(email, password);
+    if (firebaseUser != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Student Login successful!')),
       );
-      // Navigate to StudentDashboard using MaterialPageRoute
-      Navigator.push(context,MaterialPageRoute(builder: (context) => ProfilePage()),
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get();
+
+      final user = my_model.User.fromJson(userDoc.data()!..putIfAbsent('id', () => userDoc.id));
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfilePage(user: user)),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -58,30 +214,42 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-  // Employer Sign-In Method
-  void _employerSignIn() async {
-    String email = _companyEmail.text;
-    String password = _companyPassword.text;
+void _employerSignIn() async {
+  String email = _companyEmail.text;
+  String password = _companyPassword.text;
 
-    try {
-      User? user = await _auth.employerSignInWithEmailAndPassword(email, password);
-      if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Employer Login successful!')),
-        );
-        Navigator.push(context,MaterialPageRoute(builder: (context) => EmployerDashboard()),
-         ); // Navigate to Employer Dashboard
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Employer Login failed. Please try again.')),
-        );
-      }
-    } catch (e) {
+  try {
+    fb_auth.User? firebaseUser = await _auth.employerSignInWithEmailAndPassword(email, password);
+    if (firebaseUser != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
+        SnackBar(content: Text('Employer Login successful!')),
+      );
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get();
+
+      final user = my_model.User.fromJson(userDoc.data()!..putIfAbsent('id', () => userDoc.id));
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => EmployerDashboard(user: user)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Employer Login failed. Please try again.')),
       );
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: ${e.toString()}')),
+    );
   }
+}
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -134,20 +302,24 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               Column(
                                 children: [
-                                  CustomInputField(
-                                    labelText: 'Email',
-                                    hintText: 'john@example.com',
-                                    keyboardType: TextInputType.emailAddress,
-                                    controller: _studentEmail,
-                                    prefixIcon: Icons.email, // Add email icon
+                                  SizedBox(height: 8),
+                                  buildTextField(
+                                    context,
+                                    'Email',
+                                    _studentEmail,
+                                    null, // No validator
+                                    (value) {}, // No onSaved logic needed
+                                    icon: Icons.email,
                                   ),
-                                  SizedBox(height: 16),
-                                  CustomInputField(
-                                    labelText: 'Password',
-                                    hintText: 'Must be at least 6 characters',
-                                    obscureText: true,
-                                    controller: _studentPassword,
-                                    prefixIcon: Icons.lock, // Add lock icon
+                                  SizedBox(height: 8),
+                                  buildTextField(
+                                    context,
+                                    'Password',
+                                    _studentPassword,
+                                    null, // No validator
+                                    (value) {}, // No onSaved logic needed
+                                    icon: Icons.lock,
+                                    isPassword: true,
                                   ),
                                   SizedBox(height: 8),
                                   Align(
@@ -204,20 +376,24 @@ class _LoginPageState extends State<LoginPage> {
                               // Employer / T&P Login Tab
                               Column(
                                 children: [
-                                  CustomInputField(
-                                    labelText: 'Company Email',
-                                    hintText: 'company@example.com',
-                                    keyboardType: TextInputType.emailAddress,
-                                    controller: _companyEmail,
-                                    prefixIcon: Icons.email, // Add email icon
+                                  SizedBox(height: 8),
+                                  buildTextField(
+                                    context,
+                                    'Company Email',
+                                    _companyEmail,
+                                    null, // No validator
+                                    (value) {}, // No onSaved logic needed
+                                    icon: Icons.email,
                                   ),
-                                  SizedBox(height: 16),
-                                  CustomInputField(
-                                    labelText: 'Password',
-                                    hintText: 'Enter your password',
-                                    obscureText: true,
-                                    controller: _companyPassword,
-                                    prefixIcon: Icons.lock, // Add lock icon
+                                  SizedBox(height: 8),
+                                  buildTextField(
+                                    context,
+                                    'Password',
+                                    _companyPassword,
+                                    null, // No validator
+                                    (value) {}, // No onSaved logic needed
+                                    icon: Icons.lock,
+                                    isPassword: true,
                                   ),
                                   SizedBox(height: 8),
                                   Align(
@@ -282,12 +458,14 @@ void main() {
   runApp(MaterialApp(
     home: LoginPage(),
     routes: {
-      '/StudentDashboard': (context) => ProfilePage(
-          ),
-      '/EmployerDashboard': (context) => Scaffold(
-            appBar: AppBar(title: Text('Employer Dashboard')),
-            body: Center(child: Text('Welcome to the Employer Dashboard!')),
-          ),
+      '/StudentDashboard': (context) {
+        final user = ModalRoute.of(context)!.settings.arguments as my_model.User;
+        return ProfilePage(user: user);
+      },
+      '/EmployerDashboard': (context) {
+        final user = ModalRoute.of(context)!.settings.arguments as my_model.User;
+        return ProfilePage(user: user);
+      },
     },
   ));
 }

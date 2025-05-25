@@ -210,10 +210,10 @@ class MyCoursesPage extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()),
-                    );
+                    // Navigator.push(
+                      // context,
+                      // MaterialPageRoute(builder: (context) => ProfilePage()),
+                    // );
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.blue,

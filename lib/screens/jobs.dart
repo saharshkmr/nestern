@@ -13,16 +13,48 @@ import 'package:nestern/screens/login.dart';
 import 'package:nestern/screens/student_signup.dart';
 import 'package:nestern/screens/ui_ux_design_course.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
+import 'package:flutter/material.dart';
+import '../models/job.dart';
+import '../widgets/mobile_job_card..dart';
+import '../services/job_service.dart';
 
-class JobsPage extends StatelessWidget {
+// Import or define the jobs list here
+import '../models/job.dart'; // If you have a job_data.dart file exporting 'jobs'
+
+class JobsPage extends StatefulWidget {
   const JobsPage({Key? key}) : super(key: key);
+
+  @override
+  _JobsPageState createState() => _JobsPageState();
+}
+
+class _JobsPageState extends State<JobsPage> {
+  List<Job> _latestJobs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchJob();
+  }
+
+  Future<void> fetchJob() async {
+    try {
+      final jobService = JobService();
+      final jobs = await jobService.getRecentJobs(); // Adjust method name as per your service
+      setState(() {
+        _latestJobs = jobs.cast<Job>();
+      });
+    } catch (e) {
+      print('Failed to fetch jobs: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60), // Set the height of the custom header
-        child: _buildHeader(context), // Use the custom header
+        preferredSize: Size.fromHeight(60),
+        child: _buildHeader(context),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -31,7 +63,7 @@ class JobsPage extends StatelessWidget {
           children: [
             // Page Title
             Text(
-              '4 Jobs',
+              '${_latestJobs.length} Jobs',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -53,41 +85,7 @@ class JobsPage extends StatelessWidget {
             // Job Cards
             Expanded(
               child: ListView(
-                children: [
-                  _buildJobCard(
-                    title: 'Interior Designer',
-                    company: 'Module Design',
-                    location: 'Jaipur',
-                    experience: '1 year(s)',
-                    salary: '₹2,50,000',
-                    posted: '1 day ago',
-                    isActivelyHiring: true,
-                    isEarlyApplicant: true,
-                    isFresherJob: false,
-                  ),
-                  _buildJobCard(
-                    title: 'Administration Executive',
-                    company: 'Olympia Pools',
-                    location: 'Hyderabad',
-                    experience: '1 year(s)',
-                    salary: '₹2,15,000 - ₹3,25,000',
-                    posted: '3 weeks ago',
-                    isActivelyHiring: true,
-                    isEarlyApplicant: false,
-                    isFresherJob: false,
-                  ),
-                  _buildJobCard(
-                    title: 'Customer Engagement Performer',
-                    company: 'TellMe Digiinfotech Private Limited',
-                    location: 'Bhopal',
-                    experience: '0 year(s)',
-                    salary: '₹2,00,000',
-                    posted: '1 week ago',
-                    isActivelyHiring: true,
-                    isEarlyApplicant: false,
-                    isFresherJob: true,
-                  ),
-                ],
+                children: _latestJobs.map((job) => MobileJobCard(job: job)).toList(),
               ),
             ),
           ],
@@ -95,7 +93,6 @@ class JobsPage extends StatelessWidget {
       ),
     );
   }
-
   // Define the _buildJobCard method
   Widget _buildJobCard({
     required String title,

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nestern/screens/dashboard.dart';
+import 'package:nestern/screens/employer/create_course_screen.dart';
+import 'package:nestern/screens/employer/create_internship.dart';
+import 'package:nestern/screens/employer/create_job_screen.dart';
+import 'package:nestern/screens/employer/employer_profile.dart';
 import 'package:nestern/screens/employer/post.dart';
-import 'package:nestern/screens/employer/profile.dart';
+import 'package:nestern/screens/login.dart';
 import 'package:nestern/screens/student/enrolled_courses.dart';
 import 'package:nestern/screens/student/myapplications.dart';
 import 'package:nestern/screens/student/saved.dart';
@@ -9,10 +13,54 @@ import 'package:nestern/screens/student/student_dashboard.dart';
 import 'package:nestern/screens/internships.dart';
 import 'package:nestern/screens/jobs.dart';
 import 'package:nestern/screens/contact_us.dart';
+import 'package:nestern/models/user.dart' as model_user;
+import 'package:nestern/services/course_service.dart';
+import 'package:nestern/services/internship_service.dart';
+import 'package:nestern/services/job_service.dart';
+import '../../models/internship.dart';
+import '../../models/job.dart';
+import '../../models/course.dart';
 
-class EmployerDashboard extends StatelessWidget {
+class EmployerDashboard extends StatefulWidget {
+  final model_user.User user;
+  EmployerDashboard({Key? key, required this.user}) : super(key: key);
+
+  @override
+  State<EmployerDashboard> createState() => _EmployerDashboardState();
+}
+
+class _EmployerDashboardState extends State<EmployerDashboard> {
+  List<Internship> allInternships = [];
+  List<Job> allJobs = [];
+  List<Course> allCourses = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAllData();
+  }
+
+Future<void> fetchAllData() async {
+  allInternships = await InternshipService().getAllInternships();
+  allJobs = await JobService().getAllJobs();
+  allCourses = await CourseService().getAllCourses();
+  print('Internships: ${allInternships.length}');
+  print('Jobs: ${allJobs.length}');
+  print('Courses: ${allCourses.length}');
+  setState(() {
+    isLoading = false;
+  });
+}
+
+
   @override
   Widget build(BuildContext context) {
+  // Use the state variables, NOT new empty lists!
+  List<Internship> userInternships = allInternships.where((i) => i.userId == widget.user.id).toList();
+  List<Job> userJobs = allJobs.where((j) => j.userId == widget.user.id).toList();
+  List<Course> userCourses = allCourses.where((c) => c.userId == widget.user.id).toList();
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60), // Set the height of the custom header
@@ -33,7 +81,7 @@ class EmployerDashboard extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => EmployerDashboard()),
+                    MaterialPageRoute(builder: (context) => EmployerDashboard(user: widget.user)),
                   );
                 },
                 child: Text(
@@ -48,11 +96,31 @@ class EmployerDashboard extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.work),
-              title: Text('Post Internship/Job'),
+              title: Text('Post Internship'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => JobsPage()),
+                  MaterialPageRoute(builder: (context) => CreateInternshipScreen(user: widget.user)),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.work),
+              title: Text('Post Job'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateJobScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.work),
+              title: Text('Post Course'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateCourseScreen(user: widget.user)),
                 );
               },
             ),
@@ -82,139 +150,159 @@ class EmployerDashboard extends StatelessWidget {
         ),
       ),
       body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // ...existing tab and divider code...
+                Expanded(
+                  child: ListView(
                     children: [
-                      TextButton(
-                        onPressed: () {
-                          // Navigate to Internships Tab
+                      Table(
+                        border: TableBorder.all(color: Colors.grey),
+                        columnWidths: {
+                          0: FlexColumnWidth(2),
+                          1: FlexColumnWidth(2),
+                          2: FlexColumnWidth(1),
+                          3: FlexColumnWidth(2),
+                          4: FlexColumnWidth(2),
                         },
-                        child: Text(
-                          "Internships",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
+                        children: [
+                          TableRow(
+                            decoration: BoxDecoration(color: Colors.grey[200]),
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("PROFILE", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("STATUS", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("TOTAL VIEWS", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("ACTION", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("UPGRADE TO PREMIUM", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      TextButton(
-                        onPressed: () {
-                          // Navigate to Jobs Tab
-                        },
-                        child: Text(
-                          "Jobs",
-                          style: TextStyle(color: Colors.black),
-                        ),
+                          // Internships
+                          ...userInternships.map((internship) => TableRow(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(internship.title),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                internship.status,
+                                style: TextStyle(color: Colors.blue),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text((internship.applyClickCount ?? 0).toString()),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextButton(
+                                onPressed: () {
+                                  // Handle Action
+                                },
+                                child: Text("Upgrade"),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("Internship"), // <-- Category here
+                            ),
+                          ],
+                        )),
+                          // Jobs
+                          ...userJobs.map((job) => TableRow(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(job.title),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  job.status,
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text((job.applyClickCount ?? 0).toString()),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextButton(
+                                  onPressed: () {
+                                    // Handle Action
+                                  },
+                                  child: Text("Upgrade"),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(""),
+                              ),
+                            ],
+                          )),
+                          // Courses
+                          ...userCourses.map((course) => TableRow(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(course.title),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  course.status,
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextButton(
+                                  onPressed: () {
+                                    // Handle Action
+                                  },
+                                  child: Text("Upgrade"),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(""),
+                              ),
+                            ],
+                          )),
+                        ],
                       ),
                     ],
                   ),
-                  Divider(),
-                  // Table Section
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        Table(
-                          border: TableBorder.all(color: Colors.grey),
-                          columnWidths: {
-                            0: FlexColumnWidth(2),
-                            1: FlexColumnWidth(2),
-                            2: FlexColumnWidth(1),
-                            3: FlexColumnWidth(2),
-                            4: FlexColumnWidth(2),
-                          },
-                          children: [
-                            TableRow(
-                              decoration: BoxDecoration(color: Colors.grey[200]),
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "PROFILE",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "STATUS",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "TOTAL VIEWS",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "ACTION",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "UPGRADE TO PREMIUM",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            TableRow(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text("Anchoring"),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "Under Review",
-                                    style: TextStyle(color: Colors.blue),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(""),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      // Handle Action
-                                    },
-                                    child: Text("Upgrade"),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(""),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
   // Add the _buildHeader widget here
   Widget _buildHeader(BuildContext context) {
@@ -258,11 +346,11 @@ class EmployerDashboard extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PostPage()),
+                  MaterialPageRoute(builder: (context) => CreateInternshipScreen(user: widget.user)),
                 );
               },
               child: Text(
-                "Post Internship/Job",
+                "Post Internship",
                 style: TextStyle(color: Colors.black),
               ),
             ),
@@ -271,6 +359,34 @@ class EmployerDashboard extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
+                  MaterialPageRoute(builder: (context) => CreateJobScreen()),
+                );
+              },
+              child: Text(
+                "Post Job",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            SizedBox(width: 16),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateCourseScreen(user: widget.user)),
+                );
+              },
+              child: Text(
+                "Post Course",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            SizedBox(width: 16),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  // MaterialPageRoute(builder: (context) => Dashboard()),
+                  
                   MaterialPageRoute(builder: (context) => Dashboard()),
                 );
               },
@@ -285,7 +401,7 @@ class EmployerDashboard extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EmployerProfilePage()),
+                  MaterialPageRoute(builder: (context) => EmployerProfilePage(user: widget.user)),
                 );
               },
             ),
@@ -308,7 +424,7 @@ class EmployerDashboard extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EmployerProfilePage()),
+                  MaterialPageRoute(builder: (context) => EmployerProfilePage(user: widget.user)),
                 );
               },
             ),

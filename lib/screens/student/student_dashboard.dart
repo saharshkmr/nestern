@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:nestern/models/course.dart';
+import 'package:nestern/models/job.dart';
 import 'package:nestern/screens/contact_us.dart';
 import 'package:nestern/screens/dashboard.dart';
 import 'package:nestern/screens/data_science_course.dart';
+import 'package:nestern/screens/employer/course_details.dart';
+import 'package:nestern/screens/employer/internship_details.dart';
+import 'package:nestern/screens/employer/job_details.dart';
 // import 'package:nestern/screens/employer/employer_dashboard.dart';
 import 'package:nestern/screens/employer_signup.dart';
 import 'package:nestern/screens/full_stack_course.dart';
@@ -17,13 +22,119 @@ import 'package:nestern/screens/student/profile_page.dart';
 // import 'package:nestern/screens/student/student_dashboard.dart';
 import 'package:nestern/screens/student_signup.dart';
 import 'package:nestern/screens/ui_ux_design_course.dart';
+import 'package:nestern/services/course_service.dart';
+import 'package:nestern/services/internship_service.dart';
+import 'package:nestern/models/internship.dart'; // Make sure this path matches where your Internship model is defined
+import 'package:nestern/services/job_service.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
 import 'package:nestern/screens/login.dart';
 import 'package:nestern/widgets/internship_card.dart';
 import 'package:nestern/widgets/job__card.dart';
 import 'package:nestern/widgets/trending_card.dart'; // Import the TrendingSection widget
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nestern/models/user.dart' as my_model;
 
-class StudentDashboard extends StatelessWidget {
+class StudentDashboard extends StatefulWidget {
+  @override
+  _StudentDashboardState createState() => _StudentDashboardState();
+}
+
+class _StudentDashboardState extends State<StudentDashboard> {
+
+
+  Future<void> fetchCurrentUser() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser != null) {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get();
+      setState(() {
+        user = my_model.User.fromMap(userDoc.data() as Map<String, dynamic>);
+      });
+    }
+  }
+
+final firebaseUser = FirebaseAuth.instance.currentUser;
+my_model.User? user; // <-- Use your model type here
+  List<Internship> _latestInternships = [];
+  List<Job> _latestJobs = []; 
+
+    String category = "Big brands"; // Default selected category
+
+    final List<String> categories = [
+    "Big brands",
+    "Work from home",
+    "Part-time",
+    "MBA",
+    "Engineering",
+    "Media",
+    "Design",
+    "Data Science",
+    "Finance",
+    "Marketing",
+    "Human Resources",
+    "Operations",
+    "Content Writing",
+    "Graphic Design",
+    "Sales",
+    "Law",
+    "Consulting",
+    "Education",
+    "NGO",
+    "Hospitality",
+    "Architecture",
+    "Others",
+  ];
+
+      Future<void> fetchLatestInternships() async {
+    try {
+      final internshipService = InternshipService();
+      final internships = await internshipService.getRecentInternships(); // Adjust method name as per your service
+      setState(() {
+        _latestInternships = internships.cast<Internship>();
+      });
+    } catch (e) {
+      print('Failed to fetch internships: $e');
+    }
+  }
+  
+  Future<void> fetchLatestCourses() async {
+  try {
+    final courseService = CourseService();
+    final courses = await courseService.getAllCourses(); // Implement this!
+    setState(() {
+      _latestCourses = courses;
+    });
+  } catch (e) {
+    print('Failed to fetch courses: $e');
+  }
+}
+    Future<void> fetchLatestJobs() async {
+    try {
+      final jobService = JobService();
+      final jobs = await jobService.getRecentJobs(); // Adjust method name as per your service
+      setState(() {
+        _latestJobs = jobs;
+      });
+    } catch (e) {
+      // Handle error, e.g. show a snackbar or log
+      print('Failed to fetch jobs: $e');
+    }
+  }
+
+List<Course> _latestCourses = [];
+
+  @override
+  void initState() {
+    super.initState();
+  fetchLatestInternships();
+  fetchLatestJobs();
+  fetchLatestCourses(); // <-- ADD THIS LINE
+  fetchCurrentUser(); // <-- Add this
+}
+
   @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -121,191 +232,61 @@ Widget build(BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: Text(
-                  "Latest internships on Nestern",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              SizedBox(height: 8),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    InternshipCard(
-                      title: "Talent Acquisition",
-                      company: "CollegeDekho.com",
-                      location: "Jaipur",
-                      stipend: "₹ 8,000 - 12,000 /month",
-                      duration: "2 Months",
-                    ),
-                    SizedBox(width: 16),
-                    InternshipCard(
-                      title: "Law/Legal",
-                      company: "Thomas Cook",
-                      location: "Mumbai",
-                      stipend: "₹ 5,000 /month",
-                      duration: "3 Months",
-                    ),
-                    SizedBox(width: 16),
-                    InternshipCard(
-                      title: "Sourcing",
-                      company: "FirstCry.com",
-                      location: "Pune",
-                      stipend: "₹ 7,000 - 9,000 /month",
-                      duration: "2 Months",
-                    ),
-                    SizedBox(width: 16),
-                    InternshipCard(
-                      title: "Human Resources - L&D",
-                      company: "Gourmet Investments Private Limited",
-                      location: "Mumbai",
-                      stipend: "₹ 10,000 - 13,000 /month",
-                      duration: "6 Months",
-                    ),
-                    SizedBox(width: 16),
-                    InternshipCard(
-                      title: "Digital Marketing",
-                      company: "Educate Girls",
-                      location: "Mumbai (Hybrid)",
-                      stipend: "₹ 5,000 - 15,000 /month",
-                      duration: "2 Months",
-                    ),
-                    SizedBox(width: 16),
-                    InternshipCard(
-                      title: "Event Management",
-                      company: "Emerson (NI is Now Emerson)",
-                      location: "Banglore",
-                      stipend: "₹ 30,000 /month",
-                      duration: "6 Months",
-                    ),
-                    SizedBox(width: 16),
-                    InternshipCard(
-                      title: "Human Resources (HR)",
-                      company: "Sat Kartar Shopping Limited",
-                      location: "Delhi, Noida",
-                      stipend: "₹ 4,000 - 5,000 /month",
-                      duration: "6 Months",
-                    ),
-                    SizedBox(width: 16),
-                    InternshipCard(
-                      title: "Content Writing",
-                      company: "HT Media",
-                      location: "Mumbai",
-                      stipend: "₹ 3,000 - 5,000 /month",
-                      duration: "3 Months",
-                    ),
-                  ],
-                ),
-              ),
+                child: _buildHorizontalSection(
+                'Latest internships on Nestern',
+                  _latestInternships
+                    .map(
+                      (internship) => InternshipCard(
+                        internship: internship,
+                        onViewDetails: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => InternshipDetailsPage(internship: internship),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                    .toList(),
+                280, // Adjust height as needed for your card
+                null, // Or a ScrollController if you want to control scroll
+              ),),
               SizedBox(height: 40),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(
-                          child: Text(
-                            "Latest jobs on Nestern",
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                          child: _buildHorizontalSection(
+                            'Latest jobs on Nestern',
+                              _latestJobs.isEmpty
+                                ? [
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Text('No jobs available'),
+                                      ),
+                                    )
+                                  ]
+                                : _latestJobs
+                                    .map(
+                                      (job) => JobCard(
+                                        job: job,
+                                        onViewDetails: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => JobDetailsPage(job: job),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                            260, // Adjust height as needed for your card
+                            null, // Or a ScrollController if you want to control scroll
                           ),
                         ),
-                  SizedBox(height: 8),
-                  // Popular Categories
-                  Center(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center, // Center the chips
-                        children: [
-                          _buildCategoryChip("Big brands", isSelected: true, onTap: () {
-                            // Handle click for "Big brands"
-                            print("Big brands clicked");
-                          }),
-                          SizedBox(width: 8),
-                          _buildCategoryChip("Work from home", onTap: () {
-                            // Handle click for "Work from home"
-                            print("Work from home clicked");
-                          }),
-                          SizedBox(width: 8),
-                          _buildCategoryChip("Part-time", onTap: () {
-                            // Handle click for "Part-time"
-                            print("Part-time clicked");
-                          }),
-                          SizedBox(width: 8),
-                          _buildCategoryChip("MBA", onTap: () {
-                            // Handle click for "MBA"
-                            print("MBA clicked");
-                          }),
-                          SizedBox(width: 8),
-                          _buildCategoryChip("Engineering", onTap: () {
-                            // Handle click for "Engineering"
-                            print("Engineering clicked");
-                          }),
-                          SizedBox(width: 8),
-                          _buildCategoryChip("Media", onTap: () {
-                            // Handle click for "Media"
-                            print("Media clicked");
-                          }),
-                          SizedBox(width: 8),
-                          _buildCategoryChip("Design", onTap: () {
-                            // Handle click for "Design"
-                            print("Design clicked");
-                          }),
-                          SizedBox(width: 8),
-                          _buildCategoryChip("Data Science", onTap: () {
-                            // Handle click for "Data Science"
-                            print("Data Science clicked");
-                          }),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  // Job Cards
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        JobCard(
-                          title: "Subject Matter Expert",
-                          company: "CollegeDekho.com",
-                          location: "Jaipur",
-                          salary: "₹ 3,00,000 - 4,00,000 /year",
-                          isActivelyHiring: true,
-                        ),
-                        SizedBox(width: 16),
-                        JobCard(
-                          title: "Inside Sales Associate",
-                          company: "PlanetSpark",
-                          location: "Delhi, Gurgaon, Noida",
-                          salary: "₹ 6,50,000 - 7,50,000 /year",
-                          isActivelyHiring: true,
-                        ),
-                        SizedBox(width: 16),
-                        JobCard(
-                          title: "Corporate Sales Associate",
-                          company: "PlanetSpark",
-                          location: "Chennai, Hyderabad, Bangalore",
-                          salary: "₹ 6,50,000 - 7,50,000 /year",
-                          isActivelyHiring: true,
-                        ),
-                        SizedBox(width: 16),
-                        JobCard(
-                          title: "Research Associate (Finance)",
-                          company: "Netscribes (India) Private Limited",
-                          location: "Kolkata (Hybrid)",
-                          salary: "₹ 2,00,000 - 2,25,000 /year",
-                          isActivelyHiring: true,
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ],
@@ -390,99 +371,61 @@ Widget build(BuildContext context) {
                 ),
                 SizedBox(width: 16), // Space between logo and dropdowns
                 if (screenWidth >= 1260) ...[
-                  // HoverableDropdowns for larger screens
                   HoverableDropdown(
                     title: 'Internships',
-                    items: [
-                      PopupMenuItem(
-                        value: 'Internship in Delhi',
-                        child: Text('Internship in Delhi'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Internship in Mumbai',
-                        child: Text('Internship in Mumbai'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Internship in Bangalore',
-                        child: Text('Internship in Bangalore'),
-                      ),
-                    ],
-                    onSelected: (value) {
-                      if (value == 'Internship in Delhi') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => InternshipPageDelhi()),
-                        );
-                      } else if (value == 'Internship in Mumbai') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => InternshipPageMumbai()),
-                        );
-                      } else if (value == 'Internship in Bangalore') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => InternshipPageBangalore()),
-                        );
-                      }
+                    items: _latestInternships
+                        .take(6)
+                        .map((internship) => PopupMenuItem<String>(
+                              value: internship.title,
+                              child: Text(internship.title),
+                            ))
+                        .toList(),
+                    onSelected: (selectedInternshipTitle) {
+                      final selectedInternship = _latestInternships.firstWhere(
+                        (i) => i.title == selectedInternshipTitle,
+                        orElse: () => _latestInternships.first,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InternshipDetailsPage(internship: selectedInternship),
+                        ),
+                      );
                     },
                   ),
                   SizedBox(width: 16),
-                  if (screenWidth >= 1260) ...[
-                  // HoverableDropdowns for larger screens
                   HoverableDropdown(
                     title: 'Jobs',
-                    items: [
-                      PopupMenuItem(
-                        value: 'Jobs in Delhi',
-                        child: Text('Jobs in Delhi'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Jobs in Mumbai',
-                        child: Text('Jobs in Mumbai'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Jobs in Bangalore',
-                        child: Text('Jobs in Bangalore'),
-                      ),
-                    ],
-                    onSelected: (value) {
-                      if (value == 'Jobs in Delhi') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageDelhi()),
-                        );
-                      } else if (value == 'Jobs in Mumbai') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageMumbai()),
-                        );
-                      } else if (value == 'Jobs in Bangalore') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageBangalore()),
-                        );
-                      }
+                    items: _latestJobs
+                        .take(6)
+                        .map((job) => PopupMenuItem<String>(
+                              value: job.title,
+                              child: Text(job.title),
+                            ))
+                        .toList(),
+                    onSelected: (selectedJobTitle) {
+                      final selectedJob = _latestJobs.firstWhere(
+                        (j) => j.title == selectedJobTitle,
+                        orElse: () => _latestJobs.first,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => JobDetailsPage(job: selectedJob),
+                        ),
+                      );
                     },
                   ),
                   SizedBox(width: 16),
-                  if (screenWidth >= 1260) ...[
-                  // HoverableDropdowns for larger screens
                   HoverableDropdown(
                     title: 'Courses',
-                    items: [
-                      PopupMenuItem(
-                        value: 'Full Stack Development',
-                        child: Text('Full Stack Development'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Data Science',
-                        child: Text('Data Science'),
-                      ),
-                      PopupMenuItem(
-                        value: 'UI/UX Design',
-                        child: Text('UI/UX Design'),
-                      ),
-                    ],
+                    items: _latestCourses
+                        .take(6)
+                        .map((course) => PopupMenuItem<String>(
+                              value: course.title,
+                              child: Text(course.title),
+                            ))
+                        .toList(),
                     badge: Container(
                       padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                       decoration: BoxDecoration(
@@ -494,30 +437,23 @@ Widget build(BuildContext context) {
                         style: TextStyle(color: Colors.white, fontSize: 10),
                       ),
                     ),
-                    onSelected: (value) {
-                      if (value == 'Full Stack Development') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => FullStackCoursePage()),
-                        );
-                      } else if (value == 'Data Science') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => DataScienceCoursePage()),
-                        );
-                      } else if (value == 'UI/UX Design') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => UIUXDesignCoursePage()),
-                        );
-                      }
+                    onSelected: (selectedCourseTitle) {
+                      final selectedCourse = _latestCourses.firstWhere(
+                        (c) => c.title == selectedCourseTitle,
+                        orElse: () => _latestCourses.first,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CourseDetailsPage(course: selectedCourse),
+                        ),
+                      );
                     },
                   ),
+                  SizedBox(width: 16),
                 ],
               ],
-            ]
-          ]
-          ),
+            ),
             // Buttons for larger screens
             Row(
               children: [
@@ -534,10 +470,16 @@ Widget build(BuildContext context) {
                 IconButton(
                   icon: Icon(Icons.account_circle, color: Colors.black),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()),
-                    );
+                    if (user != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ProfilePage(user: user)),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('User data not loaded yet')),
+                      );
+                    }
                   },
                 ),
                 TextButton(
@@ -558,12 +500,12 @@ Widget build(BuildContext context) {
               ),
               ],
             ),
-        ],
-      ),
+      ],),
     ),
   );
 }
-  // Footer Widget
+
+// Footer Widget
 //   Widget _buildFooter() {
 //   return LayoutBuilder(
 //     builder: (context, constraints) {
@@ -755,4 +697,47 @@ Widget build(BuildContext context) {
 //       ),
 //     );
 //   }
+
+
+Widget _buildHorizontalSection(
+  String title,
+  List<Widget> cards,
+  double height,
+  ScrollController? controller,
+) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Center(
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+      ),
+      SizedBox(height: 8),
+      SizedBox(
+        height: height,
+        child: cards.isEmpty
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text('No internships available'),
+                ),
+              )
+            : ListView.separated(
+                controller: controller,
+                scrollDirection: Axis.horizontal,
+                itemCount: cards.length,
+                separatorBuilder: (_, __) => SizedBox(width: 16),
+                itemBuilder: (context, index) => cards[index],
+              ),
+      ),
+    ],
+  );
+}
+
 }

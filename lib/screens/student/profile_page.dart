@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:nestern/models/course.dart';
+import 'package:nestern/models/job.dart';
 import 'package:nestern/screens/dashboard.dart';
+import 'package:nestern/screens/employer/course_details.dart';
+import 'package:nestern/screens/employer/internship_details.dart';
+import 'package:nestern/screens/employer/job_details.dart';
 import 'package:nestern/screens/job_banglaore.dart';
 import 'package:nestern/screens/job_delhi.dart';
 import 'package:nestern/screens/job_mumbai.dart';
@@ -8,6 +13,7 @@ import 'package:nestern/screens/student/enrolled_courses.dart';
 import 'package:nestern/screens/student/myapplications.dart';
 import 'package:nestern/screens/student/saved.dart';
 import 'package:nestern/screens/student/student_dashboard.dart';
+import 'package:nestern/screens/student/student_profile.dart';
 import 'package:nestern/screens/student_signup.dart';
 import 'package:nestern/screens/employer_signup.dart';
 import 'package:nestern/screens/internship_bangalore.dart';
@@ -19,15 +25,112 @@ import 'package:nestern/screens/ui_ux_design_course.dart';
 import 'package:nestern/screens/internships.dart';
 import 'package:nestern/screens/jobs.dart';
 import 'package:nestern/screens/contact_us.dart';
+import 'package:nestern/services/course_service.dart';
+import 'package:nestern/services/internship_service.dart';
+import 'package:nestern/services/job_service.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
+import 'package:nestern/models/user.dart' as my_model;
+import 'package:nestern/widgets/recommended_widget.dart';
+import 'package:nestern/models/internship.dart'; // Add this import for Internship model
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class ProfilePage extends StatelessWidget {
+
+
+class ProfilePage extends StatefulWidget {
+  final my_model.User? user;
+
+  ProfilePage({required this.user});
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  List<Internship> internships = [];
+  bool isLoading = true;
+
+     Future<void> fetchLatestInternships() async {
+    try {
+      final internshipService = InternshipService();
+      final internships = await internshipService.getRecentInternships(); // Adjust method name as per your service
+      setState(() {
+        _latestInternships = internships.cast<Internship>();
+      });
+    } catch (e) {
+      print('Failed to fetch internships: $e');
+    }
+  }
+  
+  Future<void> fetchLatestCourses() async {
+  try {
+    final courseService = CourseService();
+    final courses = await courseService.getAllCourses(); // Implement this!
+    setState(() {
+      _latestCourses = courses;
+    });
+  } catch (e) {
+    print('Failed to fetch courses: $e');
+  }
+}
+    Future<void> fetchLatestJobs() async {
+    try {
+      final jobService = JobService();
+      final jobs = await jobService.getRecentJobs(); // Adjust method name as per your service
+      setState(() {
+        _latestJobs = jobs;
+      });
+    } catch (e) {
+      // Handle error, e.g. show a snackbar or log
+      print('Failed to fetch jobs: $e');
+    }
+  }
+
+final firebaseUser = FirebaseAuth.instance.currentUser;
+my_model.User? user; // <-- Use your model type here
+  List<Internship> _latestInternships = [];
+  List<Job> _latestJobs = []; 
+
+List<Course> _latestCourses = [];
+
+  @override
+  void initState() {
+    super.initState();
+  fetchLatestInternships();
+  fetchLatestJobs();
+  fetchLatestCourses(); // <-- ADD THIS LINE
+  fetchCurrentUser(); // <-- Add this
+}
+
+ Future<void> fetchCurrentUser() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser != null) {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get();
+      setState(() {
+        user = my_model.User.fromMap(userDoc.data() as Map<String, dynamic>);
+      });
+    }
+  }
+
+  Future<void> fetchInternships() async {
+    final snapshot = await FirebaseFirestore.instance.collection('internships').get();
+    final data = snapshot.docs.map((doc) => Internship.fromJson(doc.data())).toList();
+    setState(() {
+      internships = data;
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60), // Set the height of the custom header
-        child: _buildHeader(context), // Use the custom header
+        preferredSize: Size.fromHeight(60),
+        child: _buildHeader(context),
       ),
       drawer: Drawer(
         child: ListView(
@@ -99,13 +202,13 @@ class ProfilePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Welcome Section
-            Text(
-              'Welcome, SAHARSH!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+          Text(
+            'Welcome, ${widget.user?.profileName ?? "User"}!',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
             ),
+          ),
             SizedBox(height: 8),
             Text(
               'Explore internships and jobs tailored for you.',
@@ -155,8 +258,6 @@ class ProfilePage extends StatelessWidget {
               ],
             ),
             SizedBox(height: 16),
-
-            // Recommended Section
             Text(
               'Recommended for You',
               style: TextStyle(
@@ -166,19 +267,22 @@ class ProfilePage extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Expanded(
-              child: ListView.builder(
-                itemCount: 5, // Replace with dynamic data
-                itemBuilder: (context, index) {
-                  return _buildJobCard(
-                    title: 'Internship Title $index',
-                    company: 'Company Name $index',
-                    location: 'Location $index',
-                    onTap: () {
-                      // Navigate to Job Details Page
-                    },
-                  );
-                },
-              ),
+              child: isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : internships.isEmpty
+                      ? Center(child: Text('No internships found.'))
+                      : ListView.builder(
+                          itemCount: internships.length,
+                          itemBuilder: (context, index) {
+                            final internship = internships[index];
+                            return RecommendedInternshipCard(
+                              internship: internship,
+                              onTap: () {
+                                // Navigate to Job Details Page or show details
+                              },
+                            );
+                          },
+                        ),
             ),
           ],
         ),
@@ -205,7 +309,7 @@ class ProfilePage extends StatelessWidget {
       child: AppBar(
         backgroundColor: Colors.white,
         elevation: 0, // Remove default AppBar shadow
-        automaticallyImplyLeading: screenWidth < 1260, // Remove the back button
+        automaticallyImplyLeading: screenWidth < 1260, // Automatically show the drawer icon for small screens
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -237,95 +341,61 @@ class ProfilePage extends StatelessWidget {
                 ),
                 SizedBox(width: 16), // Space between logo and dropdowns
                 if (screenWidth >= 1260) ...[
-                  // HoverableDropdowns for larger screens
                   HoverableDropdown(
                     title: 'Internships',
-                    items: [
-                      PopupMenuItem(
-                        value: 'Internship in Delhi',
-                        child: Text('Internship in Delhi'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Internship in Mumbai',
-                        child: Text('Internship in Mumbai'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Internship in Bangalore',
-                        child: Text('Internship in Bangalore'),
-                      ),
-                    ],
-                    onSelected: (value) {
-                      if (value == 'Internship in Delhi') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => InternshipPageDelhi()),
-                        );
-                      } else if (value == 'Internship in Mumbai') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => InternshipPageMumbai()),
-                        );
-                      } else if (value == 'Internship in Bangalore') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => InternshipPageBangalore()),
-                        );
-                      }
+                    items: _latestInternships
+                        .take(6)
+                        .map((internship) => PopupMenuItem<String>(
+                              value: internship.title,
+                              child: Text(internship.title),
+                            ))
+                        .toList(),
+                    onSelected: (selectedInternshipTitle) {
+                      final selectedInternship = _latestInternships.firstWhere(
+                        (i) => i.title == selectedInternshipTitle,
+                        orElse: () => _latestInternships.first,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InternshipDetailsPage(internship: selectedInternship),
+                        ),
+                      );
                     },
                   ),
                   SizedBox(width: 16),
                   HoverableDropdown(
                     title: 'Jobs',
-                    items: [
-                      PopupMenuItem(
-                        value: 'Jobs in Delhi',
-                        child: Text('Jobs in Delhi'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Jobs in Mumbai',
-                        child: Text('Jobs in Mumbai'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Jobs in Bangalore',
-                        child: Text('Jobs in Bangalore'),
-                      ),
-                    ],
-                    onSelected: (value) {
-                      if (value == 'Jobs in Delhi') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageDelhi()),
-                        );
-                      } else if (value == 'Jobs in Mumbai') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageMumbai()),
-                        );
-                      } else if (value == 'Jobs in Bangalore') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageBangalore()),
-                        );
-                      }
+                    items: _latestJobs
+                        .take(6)
+                        .map((job) => PopupMenuItem<String>(
+                              value: job.title,
+                              child: Text(job.title),
+                            ))
+                        .toList(),
+                    onSelected: (selectedJobTitle) {
+                      final selectedJob = _latestJobs.firstWhere(
+                        (j) => j.title == selectedJobTitle,
+                        orElse: () => _latestJobs.first,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => JobDetailsPage(job: selectedJob),
+                        ),
+                      );
                     },
                   ),
                   SizedBox(width: 16),
                   HoverableDropdown(
                     title: 'Courses',
-                    items: [
-                      PopupMenuItem(
-                        value: 'Full Stack Development',
-                        child: Text('Full Stack Development'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Data Science',
-                        child: Text('Data Science'),
-                      ),
-                      PopupMenuItem(
-                        value: 'UI/UX Design',
-                        child: Text('UI/UX Design'),
-                      ),
-                    ],
+                    items: _latestCourses
+                        .take(6)
+                        .map((course) => PopupMenuItem<String>(
+                              value: course.title,
+                              child: Text(course.title),
+                            ))
+                        .toList(),
                     badge: Container(
                       padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                       decoration: BoxDecoration(
@@ -337,28 +407,24 @@ class ProfilePage extends StatelessWidget {
                         style: TextStyle(color: Colors.white, fontSize: 10),
                       ),
                     ),
-                    onSelected: (value) {
-                      if (value == 'Full Stack Development') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => FullStackCoursePage()),
-                        );
-                      } else if (value == 'Data Science') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => DataScienceCoursePage()),
-                        );
-                      } else if (value == 'UI/UX Design') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => UIUXDesignCoursePage()),
-                        );
-                      }
+                    onSelected: (selectedCourseTitle) {
+                      final selectedCourse = _latestCourses.firstWhere(
+                        (c) => c.title == selectedCourseTitle,
+                        orElse: () => _latestCourses.first,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CourseDetailsPage(course: selectedCourse),
+                        ),
+                      );
                     },
                   ),
+                  SizedBox(width: 16),
                 ],
               ],
             ),
+            // Buttons for larger screens
             Row(
               children: [
                 SizedBox(width: 16), // Space between search bar and icons
@@ -374,10 +440,16 @@ class ProfilePage extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.account_circle, color: Colors.black),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()),
-                    );
+                    if (user != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ProfilePage(user: user)),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('User data not loaded yet')),
+                      );
+                    }
                   },
                 ),
                 TextButton(
@@ -398,10 +470,9 @@ class ProfilePage extends StatelessWidget {
               ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
+      ],),
+    ),
+  );
   }
 
   // Helper Widget for Dashboard Cards

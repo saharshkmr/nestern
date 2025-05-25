@@ -12,10 +12,38 @@ import 'package:nestern/screens/job_mumbai.dart';
 import 'package:nestern/screens/login.dart';
 import 'package:nestern/screens/student_signup.dart';
 import 'package:nestern/screens/ui_ux_design_course.dart';
+import 'package:nestern/services/internship_service.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
+import 'package:nestern/models/internship.dart';
+import 'package:nestern/widgets/mobile_internship_card.dart'; // Make sure this path matches where your Internship class is defined
 
-class InternshipsPage extends StatelessWidget {
-  const InternshipsPage({Key? key}) : super(key: key);
+class InternshipsPage extends StatefulWidget {
+  InternshipsPage({Key? key}) : super(key: key);
+
+  @override
+  _InternshipsPageState createState() => _InternshipsPageState();
+}
+
+class _InternshipsPageState extends State<InternshipsPage> {
+  List<Internship> _latestInternships = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchLatestInternships();
+  }
+
+  Future<void> fetchLatestInternships() async {
+    try {
+      final internshipService = InternshipService();
+      final internships = await internshipService.getRecentInternships(); // Adjust method name as per your service
+      setState(() {
+        _latestInternships = internships.cast<Internship>();
+      });
+    } catch (e) {
+      print('Failed to fetch internships: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +59,7 @@ class InternshipsPage extends StatelessWidget {
           children: [
             // Page Title
             Text(
-              '4 Total Internships',
+              '${_latestInternships.length} Total Internships',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -50,50 +78,16 @@ class InternshipsPage extends StatelessWidget {
             // Internship Cards
             Expanded(
               child: ListView(
-                children: [
-                  _buildInternshipCard(
-                    title: 'Travel Consultant',
-                    company: 'Happiness Plans',
-                    location: 'Indore',
-                    duration: '3 Months',
-                    stipend: '₹5,000 - ₹10,000 /month',
-                    posted: '2 weeks ago',
-                    isActivelyHiring: true,
-                    additionalBadge: null,
-                  ),
-                  _buildInternshipCard(
-                    title: 'Interior Design',
-                    company: 'NAKSH GRUHAM DESIGN STUDIO',
-                    location: 'Mumbai',
-                    duration: '6 Months',
-                    stipend: '₹7,000 - ₹10,000 /month',
-                    posted: '2 weeks ago',
-                    isActivelyHiring: true,
-                    additionalBadge: null,
-                  ),
-                  _buildInternshipCard(
-                    title: 'Business Development (Sales)',
-                    company: 'Sneh Academic Services Private Limited',
-                    location: 'Ahmedabad',
-                    duration: '2 Months',
-                    stipend: '₹10,000 /month',
-                    posted: '3 weeks ago',
-                    isActivelyHiring: true,
-                    additionalBadge: 'Job offer upto ₹4LPA post internship',
-                  ),
-                  _buildInternshipCard(
-                    title: 'Business Development (Sales)',
-                    company: 'Sarvajnaya',
-                    location: 'Indore',
-                    duration: '3 Months',
-                    stipend: '₹2,000 - ₹5,000 /month',
-                    posted: '3 weeks ago',
-                    isActivelyHiring: true,
-                    additionalBadge: 'Job offer upto ₹3LPA post internship',
-                  ),
-                ],
+                children: _latestInternships.map((internship) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: MobileInternshipCard(
+                      internship: internship,
+                    ),
+                  );
+                }).toList(),
               ),
-            ),
+            ),  
           ],
         ),
       ),

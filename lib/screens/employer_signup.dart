@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nestern/screens/dashboard.dart';
 import 'package:nestern/screens/employer/employer_dashboard.dart';
+import 'package:nestern/screens/employer/employer_details_form.dart';
+import 'package:nestern/screens/employer/employer_profile.dart';
 import 'package:nestern/screens/login.dart';
 import 'package:nestern/screens/student_signup.dart';
-import 'package:nestern/widgets/custom_input_field.dart';
+import 'package:nestern/widgets/input_widget.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
+import 'package:nestern/models/user.dart' as app_model;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 
 class EmployerSignUpPage extends StatefulWidget {
   @override
@@ -18,7 +23,50 @@ class _EmployerSignUpPageState extends State<EmployerSignUpPage> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
 
+  // Add these fields for password input and error handling
+  final TextEditingController _studentPassword = TextEditingController();
+  bool obscureStudentPassword = true;
+  String? studentPasswordError;
+
+String? passwordValidator(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Password is required';
+  }
+  if (value.length < 6) {
+    return 'Password must be at least 6 characters';
+  }
+  if (!RegExp(r'[0-9]').hasMatch(value)) {
+    return 'Password must contain at least one number';
+  }
+  if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+    return 'Password must contain at least one special character';
+  }
+  return null;
+}
+
+  String? confirmPasswordValidator(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Confirm your password';
+  }
+  if (value != passwordController.text) {
+    return 'Passwords do not match';
+  }
+  // Reuse password rules
+  return passwordValidator(value);
+}
+
+bool agreedToTerms = false;
+  void toggleTermsAgreement() {
+    setState(() {
+      agreedToTerms = !agreedToTerms;
+    });
+  }
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController confirmPasswordController = TextEditingController();
+  bool obscureConfirmPassword = true;
+
+final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -26,34 +74,67 @@ class _EmployerSignUpPageState extends State<EmployerSignUpPage> {
     passwordController.dispose();
     firstNameController.dispose();
     lastNameController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
+Future<fb_auth.User?> employerSignUpWithEmailAndPassword(String email, String password) async {
+  final creds = await fb_auth.FirebaseAuth.instance
+      .createUserWithEmailAndPassword(email: email, password: password);
+  return creds.user;
+}
 
-  void _signUp() async {
-    String email = emailController.text.trim();
-    String password = passwordController.text.trim();
 
-    try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
+void _signUp() async {
+  String email = emailController.text;
+  String password = passwordController.text;
+  String firstName = firstNameController.text;
+  String lastName = lastNameController.text;
+
+  try {
+    fb_auth.User? firebaseUser =
+        await employerSignUpWithEmailAndPassword(email, password);
+
+    if (firebaseUser != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Employer Sign-up successful!')),
       );
 
-      if (userCredential.user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Sign-up successful!')),
-        );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => EmployerDashboard()),
-        );
-      }
-    } catch (e) {
+      final user = app_model.User(
+        id: firebaseUser.uid,
+        company: '', // You can let them fill this later
+        profileName: '$firstName $lastName',
+        email: firebaseUser.email ?? '',
+        mobile: '',
+        role: 'employer',
+        skills: [],
+        uid: firebaseUser.uid,
+        url: null,
+        bio: null,
+        isProfileComplete: false,
+        hasResume: false,
+        status: null,
+        isOnline: false,
+        lastSeen: null,
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => EmployerDetailsForm(user: user),
+        ),
+      );
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
+        SnackBar(content: Text('Sign-up failed. Please try again.')),
       );
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: ${e.toString()}')),
+    );
   }
+}
+
 
   @override
 Widget build(BuildContext context) {
@@ -119,59 +200,120 @@ Widget build(BuildContext context) {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Column(
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Email Field
-                        CustomInputField(
-                          controller: emailController,
-                          labelText: "Official Email Id",
-                          hintText: "name@company.com",
-                          prefixIcon: Icons.email,
+                        buildTextField(
+                          context,
+                          "Email",
+                          emailController,
+                          null, // validator if needed
+                          (value) {}, // onSaved if needed
+                          icon: Icons.email,
+                        ),
+                        SizedBox(height: 16),// Password Field
+                        buildTextField(
+                          context,
+                          "Password",
+                          passwordController,
+                          passwordValidator, // <-- Add validator here
+                          (value) {},
+                          icon: Icons.lock,
+                          isPassword: true,
+                          obscure: obscureStudentPassword,
+                          toggleObscure: () {
+                            setState(() {
+                              obscureStudentPassword = !obscureStudentPassword;
+                            });
+                          },
                         ),
                         SizedBox(height: 16),
-                        // Password Field
-                        CustomInputField(
-                          controller: passwordController,
-                          labelText: "Password",
-                          hintText: "Minimum 6 characters",
-                          prefixIcon: Icons.lock,
-                          obscureText: true,
+                        // Confirm Password Field
+                        buildTextField(
+                          context,
+                          "Confirm Password",
+                          confirmPasswordController,
+                          confirmPasswordValidator, // <-- Add validator here
+                          (value) {},
+                          icon: Icons.lock,
+                          isPassword: true,
+                          obscure: obscureConfirmPassword,
+                          toggleObscure: () {
+                            setState(() {
+                              obscureConfirmPassword = !obscureConfirmPassword;
+                            });
+                          },
                         ),
                         SizedBox(height: 16),
                         // First Name and Last Name Fields
                         Row(
                           children: [
                             Expanded(
-                              child: CustomInputField(
-                                controller: firstNameController,
-                                labelText: "First Name",
-                                hintText: "Your First Name",
-                                prefixIcon: Icons.person,
+                              child: buildTextField(
+                                context,
+                                "First Name",
+                                firstNameController,
+                                null,
+                                (value) {},
+                                icon: Icons.person,
                               ),
                             ),
                             SizedBox(width: 16),
                             Expanded(
-                              child: CustomInputField(
-                                controller: lastNameController,
-                                labelText: "Last Name",
-                                hintText: "Your Last Name",
-                                prefixIcon: Icons.person_outline,
+                              child: buildTextField(
+                                context,
+                                "Last Name",
+                                lastNameController,
+                                null,
+                                (value) {},
+                                icon: Icons.person,
                               ),
                             ),
                           ],
                         ),
                         SizedBox(height: 16),
-                        // Terms and Conditions
-                        Text(
-                          "By clicking on Post for Free, you agree to our T&C.",
-                          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                          textAlign: TextAlign.center,
+                        // Terms and Conditions Checkbox
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: agreedToTerms,
+                              onChanged: (value) {
+                                setState(() {
+                                  agreedToTerms = value ?? false;
+                                });
+                              },
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    agreedToTerms = !agreedToTerms;
+                                  });
+                                },
+                                child: Text(
+                                  "I agree to the Terms & Conditions",
+                                  style: TextStyle(fontSize: 14, color: Colors.grey[800]),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 16),
                         // Post for Free Button
                         ElevatedButton(
-                          onPressed: _signUp,
+                          onPressed: () {
+                            if (!_formKey.currentState!.validate()) return;
+                            if (!agreedToTerms) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('You must agree to the Terms & Conditions')),
+                              );
+                              return;
+                            }
+                            _signUp();
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,
@@ -205,17 +347,16 @@ Widget build(BuildContext context) {
                         ),
                       ],
                     ),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ],
-    ),
-    // bottomNavigationBar: _buildFooter(), // Add the footer
-  );
-}
+      ],),
+    );
+  }
 
   // Header Widget from Dashboard
   Widget _buildHeader(BuildContext context) {
@@ -547,4 +688,42 @@ Widget build(BuildContext context) {
   //     ),
   //   );
   // }
+  // void main() {
+  // runApp(MaterialApp(
+  //   initialRoute: '/',
+  //   onGenerateRoute: (settings) {
+  //     switch (settings.name) {
+  //       case '/':
+  //         return MaterialPageRoute(builder: (context) => StudentSignUpPage());
+  //       case '/Dashboard':
+  //         // Get the current Firebase user
+  //         final firebaseUser = fb_auth.FirebaseAuth.instance.currentUser;
+  //         if (firebaseUser != null) {
+  //           // You may need to fetch additional user data from Firestore if required
+  //           return MaterialPageRoute(
+  //             builder: (context) => EmployerProfilePage(
+  //               user: app_model.User(
+  //                 id: firebaseUser.uid,
+  //                 company: '',
+  //                 profileName: firebaseUser.displayName ?? '',
+  //                 email: firebaseUser.email ?? '',
+  //                 mobile: '',
+  //                 role: 'employer',
+  //                 skills: [],
+  //                 uid: firebaseUser.uid,
+  //               ),
+  //           ));
+  //         } else {
+  //           // If not logged in, redirect to sign up or login
+  //           return MaterialPageRoute(builder: (context) => EmployerSignUpPage());
+  //         }
+  //       default:
+  //         return MaterialPageRoute(
+  //           builder: (context) => Scaffold(
+  //             body: Center(child: Text('Page not found')),
+  //           ),
+  //         );
+  //     }
+  //   },
+  // ));
 }
