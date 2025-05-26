@@ -3,25 +3,13 @@ import 'package:nestern/models/course.dart';
 import 'package:nestern/models/job.dart';
 import 'package:nestern/screens/contact_us.dart';
 import 'package:nestern/screens/dashboard.dart';
-import 'package:nestern/screens/data_science_course.dart';
 import 'package:nestern/screens/employer/course_details.dart';
 import 'package:nestern/screens/employer/internship_details.dart';
 import 'package:nestern/screens/employer/job_details.dart';
-// import 'package:nestern/screens/employer/employer_dashboard.dart';
 import 'package:nestern/screens/employer_signup.dart';
-import 'package:nestern/screens/full_stack_course.dart';
-import 'package:nestern/screens/internship_delhi.dart';
 import 'package:nestern/screens/internships.dart';
-import 'package:nestern/screens/internship_bangalore.dart';
-import 'package:nestern/screens/internship_mumbai.dart';
-import 'package:nestern/screens/job_banglaore.dart';
-import 'package:nestern/screens/job_delhi.dart';
-import 'package:nestern/screens/job_mumbai.dart';
 import 'package:nestern/screens/jobs.dart';
-import 'package:nestern/screens/student/profile_page.dart';
-// import 'package:nestern/screens/student/student_dashboard.dart';
 import 'package:nestern/screens/student_signup.dart';
-import 'package:nestern/screens/ui_ux_design_course.dart';
 import 'package:nestern/services/course_service.dart';
 import 'package:nestern/services/internship_service.dart';
 import 'package:nestern/models/internship.dart'; // Make sure this path matches where your Internship model is defined
@@ -88,7 +76,36 @@ my_model.User? user; // <-- Use your model type here
     "Others",
   ];
 
-      Future<void> fetchLatestInternships() async {
+  
+
+
+List<Course> _latestCourses = [];
+
+bool isLoading = true;
+
+@override
+void initState() {
+  super.initState();
+  fetchLatestInternships();
+  fetchLatestJobs();
+  fetchLatestCourses();
+  fetchCurrentUser();
+}
+
+  Future<void> fetchLatestJobs() async {
+    try {
+      final jobService = JobService();
+      final jobs = await jobService.getRecentJobs(); // Adjust method name as per your service
+      setState(() {
+        _latestJobs = jobs;
+      });
+    } catch (e) {
+      // Handle error, e.g. show a snackbar or log
+      print('Failed to fetch jobs: $e');
+    }
+  }
+
+    Future<void> fetchLatestInternships() async {
     try {
       final internshipService = InternshipService();
       final internships = await internshipService.getRecentInternships(); // Adjust method name as per your service
@@ -111,30 +128,6 @@ my_model.User? user; // <-- Use your model type here
     print('Failed to fetch courses: $e');
   }
 }
-    Future<void> fetchLatestJobs() async {
-    try {
-      final jobService = JobService();
-      final jobs = await jobService.getRecentJobs(); // Adjust method name as per your service
-      setState(() {
-        _latestJobs = jobs;
-      });
-    } catch (e) {
-      // Handle error, e.g. show a snackbar or log
-      print('Failed to fetch jobs: $e');
-    }
-  }
-
-List<Course> _latestCourses = [];
-
-  @override
-  void initState() {
-    super.initState();
-  fetchLatestInternships();
-  fetchLatestJobs();
-  fetchLatestCourses(); // <-- ADD THIS LINE
-  fetchCurrentUser(); // <-- Add this
-}
-
   @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -323,35 +316,32 @@ Widget build(BuildContext context) {
   // Header Widget
   Widget _buildHeader(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white, // Background color of the header
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2), // Shadow color
-            spreadRadius: 2, // Spread radius
-            blurRadius: 4, // Blur radius
-            offset: Offset(0, 2), // Offset in the downward direction
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0, // Remove default AppBar shadow
-        automaticallyImplyLeading: screenWidth < 1260, // Automatically show the drawer icon for small screens
+        elevation: 0,
+        automaticallyImplyLeading: screenWidth < 1260,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Logo and HoverableDropdowns grouped together
             Row(
               children: [
-                // Logo or Text based on screen width
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => StudentDashboard()),
+                      MaterialPageRoute(builder: (context) => Dashboard()),
                     );
                   },
                   child: screenWidth < 700
@@ -365,11 +355,11 @@ Widget build(BuildContext context) {
                         )
                       : Image.asset(
                           'assets/main_logo.png',
-                          width: 120, // Smaller logo for larger screens
-                          height: 40, // Adjust height accordingly
+                          width: 120,
+                          height: 40,
                         ),
                 ),
-                SizedBox(width: 16), // Space between logo and dropdowns
+                SizedBox(width: 16),
                 if (screenWidth >= 1260) ...[
                   HoverableDropdown(
                     title: 'Internships',
@@ -454,55 +444,120 @@ Widget build(BuildContext context) {
                 ],
               ],
             ),
-            // Buttons for larger screens
             Row(
               children: [
-                SizedBox(width: 16), // Space between search bar and icons
-                IconButton(
-                  icon: Icon(Icons.notifications, color: Colors.black),
-                  onPressed: () {
-                    
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('No new notifications')),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.account_circle, color: Colors.black),
-                  onPressed: () {
-                    if (user != null) {
+                if (screenWidth > 991)
+                  TextButton(
+                    onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ProfilePage(user: user)),
+                        MaterialPageRoute(builder: (context) => LoginPage()),
                       );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('User data not loaded yet')),
-                      );
-                    }
-                  },
-                ),
-                TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Dashboard()),
-                  );
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blue,
-                  side: BorderSide(color: Colors.blue),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue,
+                      side: BorderSide(color: Colors.blue),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: Text('Login'),
                   ),
-                ),
-                child: Text('Logout'),
-              ),
+                SizedBox(width: 8),
+                if (screenWidth > 767) ...[
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => StudentSignUpPage()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      side: BorderSide(color: Colors.blue),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: Text('Candidate Sign-up'),
+                  ),
+                  SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => EmployerSignUpPage()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: Text('Employer Sign-up'),
+                  ),
+                ] else ...[
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: DropdownButton<String>(
+                      hint: Text(
+                        'Register',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      icon: Icon(Icons.arrow_drop_down, color: Colors.white, size: 20),
+                      items: [
+                        DropdownMenuItem(
+                          value: 'student',
+                          child: Text(
+                            'As a Student',
+                            style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 14),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'employer',
+                          child: Text(
+                            'As an Employer',
+                            style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 14),
+                          ),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        if (value == 'student') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => StudentSignUpPage()),
+                          );
+                        } else if (value == 'employer') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => EmployerSignUpPage()),
+                          );
+                        }
+                      },
+                      underline: SizedBox(),
+                    ),
+                  ),
+                ],
               ],
             ),
-      ],),
-    ),
-  );
+          ],
+        ),
+      ),
+    );
+  }
+
 }
 
 // Footer Widget
@@ -738,6 +793,4 @@ Widget _buildHorizontalSection(
       ),
     ],
   );
-}
-
 }

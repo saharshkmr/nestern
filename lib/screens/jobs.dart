@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:nestern/models/course.dart';
+import 'package:nestern/models/internship.dart';
 import 'package:nestern/screens/dashboard.dart';
 import 'package:nestern/screens/data_science_course.dart';
+import 'package:nestern/screens/employer/course_details.dart';
+import 'package:nestern/screens/employer/internship_details.dart';
+import 'package:nestern/screens/employer/job_details.dart';
 import 'package:nestern/screens/employer_signup.dart';
 import 'package:nestern/screens/full_stack_course.dart';
 import 'package:nestern/screens/internship_bangalore.dart';
 import 'package:nestern/screens/internship_delhi.dart';
 import 'package:nestern/screens/internship_mumbai.dart';
-import 'package:nestern/screens/job_banglaore.dart';
-import 'package:nestern/screens/job_delhi.dart';
-import 'package:nestern/screens/job_mumbai.dart';
 import 'package:nestern/screens/login.dart';
 import 'package:nestern/screens/student_signup.dart';
-import 'package:nestern/screens/ui_ux_design_course.dart';
+import 'package:nestern/services/course_service.dart';
+import 'package:nestern/services/internship_service.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
-import 'package:flutter/material.dart';
 import '../models/job.dart';
 import '../widgets/mobile_job_card..dart';
 import '../services/job_service.dart';
@@ -34,8 +36,53 @@ class _JobsPageState extends State<JobsPage> {
   @override
   void initState() {
     super.initState();
+  fetchLatestInternships();
+  fetchLatestJobs();
+  fetchLatestCourses(); // <-- ADD THIS LINE
     fetchJob();
   }
+  
+  Future<void> fetchLatestJobs() async {
+    try {
+      final jobService = JobService();
+      final jobs = await jobService.getRecentJobs(); // Adjust method name as per your service
+      setState(() {
+        _latestJobs = jobs;
+      });
+    } catch (e) {
+      // Handle error, e.g. show a snackbar or log
+      print('Failed to fetch jobs: $e');
+    }
+  }
+
+    Future<void> fetchLatestInternships() async {
+    try {
+      final internshipService = InternshipService();
+      final internships = await internshipService.getRecentInternships(); // Adjust method name as per your service
+      setState(() {
+        _latestInternships = internships.cast<Internship>();
+      });
+    } catch (e) {
+      print('Failed to fetch internships: $e');
+    }
+  }
+  
+  Future<void> fetchLatestCourses() async {
+  try {
+    final courseService = CourseService();
+    final courses = await courseService.getAllCourses(); // Implement this!
+    setState(() {
+      _latestCourses = courses;
+    });
+  } catch (e) {
+    print('Failed to fetch courses: $e');
+  }
+}
+
+
+List<Internship> _latestInternships = [];
+List<Course> _latestCourses = [];
+
 
   Future<void> fetchJob() async {
     try {
@@ -182,30 +229,27 @@ class _JobsPageState extends State<JobsPage> {
   // Add the _buildHeader widget here
   Widget _buildHeader(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white, // Background color of the header
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2), // Shadow color
-            spreadRadius: 2, // Spread radius
-            blurRadius: 4, // Blur radius
-            offset: Offset(0, 2), // Offset in the downward direction
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0, // Remove default AppBar shadow
-        automaticallyImplyLeading: screenWidth < 1260, // Automatically show the drawer icon for small screens
+        elevation: 0,
+        automaticallyImplyLeading: screenWidth < 1260,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Logo and HoverableDropdowns grouped together
             Row(
               children: [
-                // Logo or Text based on screen width
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -224,101 +268,67 @@ class _JobsPageState extends State<JobsPage> {
                         )
                       : Image.asset(
                           'assets/main_logo.png',
-                          width: 120, // Smaller logo for larger screens
-                          height: 40, // Adjust height accordingly
+                          width: 120,
+                          height: 40,
                         ),
                 ),
-                SizedBox(width: 16), // Space between logo and dropdowns
+                SizedBox(width: 16),
                 if (screenWidth >= 1260) ...[
-                  // HoverableDropdowns for larger screens
                   HoverableDropdown(
                     title: 'Internships',
-                    items: [
-                      PopupMenuItem(
-                        value: 'Internship in Delhi',
-                        child: Text('Internship in Delhi'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Internship in Mumbai',
-                        child: Text('Internship in Mumbai'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Internship in Bangalore',
-                        child: Text('Internship in Bangalore'),
-                      ),
-                    ],
-                    onSelected: (value) {
-                      if (value == 'Internship in Delhi') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => InternshipPageDelhi()),
-                        );
-                      } else if (value == 'Internship in Mumbai') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => InternshipPageMumbai()),
-                        );
-                      } else if (value == 'Internship in Bangalore') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => InternshipPageBangalore()),
-                        );
-                      }
+                    items: _latestInternships
+                        .take(6)
+                        .map((internship) => PopupMenuItem<String>(
+                              value: internship.title,
+                              child: Text(internship.title),
+                            ))
+                        .toList(),
+                    onSelected: (selectedInternshipTitle) {
+                      final selectedInternship = _latestInternships.firstWhere(
+                        (i) => i.title == selectedInternshipTitle,
+                        orElse: () => _latestInternships.first,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InternshipDetailsPage(internship: selectedInternship),
+                        ),
+                      );
                     },
                   ),
                   SizedBox(width: 16),
                   HoverableDropdown(
                     title: 'Jobs',
-                    items: [
-                      PopupMenuItem(
-                        value: 'Jobs in Delhi',
-                        child: Text('Jobs in Delhi'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Jobs in Mumbai',
-                        child: Text('Jobs in Mumbai'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Jobs in Bangalore',
-                        child: Text('Jobs in Bangalore'),
-                      ),
-                    ],
-                    onSelected: (value) {
-                      if (value == 'Jobs in Delhi') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageDelhi()),
-                        );
-                      } else if (value == 'Jobs in Mumbai') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageMumbai()),
-                        );
-                      } else if (value == 'Jobs in Bangalore') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageBangalore()),
-                        );
-                      }
+                    items: _latestJobs
+                        .take(6)
+                        .map((job) => PopupMenuItem<String>(
+                              value: job.title,
+                              child: Text(job.title),
+                            ))
+                        .toList(),
+                    onSelected: (selectedJobTitle) {
+                      final selectedJob = _latestJobs.firstWhere(
+                        (j) => j.title == selectedJobTitle,
+                        orElse: () => _latestJobs.first,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => JobDetailsPage(job: selectedJob),
+                        ),
+                      );
                     },
                   ),
                   SizedBox(width: 16),
                   HoverableDropdown(
                     title: 'Courses',
-                    items: [
-                      PopupMenuItem(
-                        value: 'Full Stack Development',
-                        child: Text('Full Stack Development'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Data Science',
-                        child: Text('Data Science'),
-                      ),
-                      PopupMenuItem(
-                        value: 'UI/UX Design',
-                        child: Text('UI/UX Design'),
-                      ),
-                    ],
+                    items: _latestCourses
+                        .take(6)
+                        .map((course) => PopupMenuItem<String>(
+                              value: course.title,
+                              child: Text(course.title),
+                            ))
+                        .toList(),
                     badge: Container(
                       padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                       decoration: BoxDecoration(
@@ -330,32 +340,26 @@ class _JobsPageState extends State<JobsPage> {
                         style: TextStyle(color: Colors.white, fontSize: 10),
                       ),
                     ),
-                    onSelected: (value) {
-                      if (value == 'Full Stack Development') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => FullStackCoursePage()),
-                        );
-                      } else if (value == 'Data Science') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => DataScienceCoursePage()),
-                        );
-                      } else if (value == 'UI/UX Design') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => UIUXDesignCoursePage()),
-                        );
-                      }
+                    onSelected: (selectedCourseTitle) {
+                      final selectedCourse = _latestCourses.firstWhere(
+                        (c) => c.title == selectedCourseTitle,
+                        orElse: () => _latestCourses.first,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CourseDetailsPage(course: selectedCourse),
+                        ),
+                      );
                     },
                   ),
+                  SizedBox(width: 16),
                 ],
               ],
             ),
-            // Buttons for larger screens
             Row(
               children: [
-                if (screenWidth > 991) // Show Login button only if screen width > 991
+                if (screenWidth > 991)
                   TextButton(
                     onPressed: () {
                       Navigator.push(
@@ -410,35 +414,35 @@ class _JobsPageState extends State<JobsPage> {
                   ),
                 ] else ...[
                   Container(
-                    height: 40, // Set the height of the box
+                    height: 40,
                     decoration: BoxDecoration(
-                      color: Colors.blue, // Set the background color of the button to blue
-                      borderRadius: BorderRadius.circular(4), // Optional: Add rounded corners
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Adjust padding to match HoverableDropdown
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: DropdownButton<String>(
                       hint: Text(
                         'Register',
                         style: TextStyle(
-                          color: Colors.white, // Set the text color to white for contrast
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14, // Adjust font size to match HoverableDropdown
+                          fontSize: 14,
                         ),
                       ),
-                      icon: Icon(Icons.arrow_drop_down, color: Colors.white, size: 20), // Adjust icon size to match HoverableDropdown
+                      icon: Icon(Icons.arrow_drop_down, color: Colors.white, size: 20),
                       items: [
                         DropdownMenuItem(
                           value: 'student',
                           child: Text(
                             'As a Student',
-                            style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 14), // Adjust text size for dropdown items
+                            style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 14),
                           ),
                         ),
                         DropdownMenuItem(
                           value: 'employer',
                           child: Text(
                             'As an Employer',
-                            style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 14), // Adjust text size for dropdown items
+                            style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 14),
                           ),
                         ),
                       ],
@@ -455,7 +459,7 @@ class _JobsPageState extends State<JobsPage> {
                           );
                         }
                       },
-                      underline: SizedBox(), // Remove the default underline
+                      underline: SizedBox(),
                     ),
                   ),
                 ],

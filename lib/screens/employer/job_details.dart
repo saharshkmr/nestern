@@ -29,6 +29,10 @@ class JobDetailsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(job.title),
         backgroundColor: Colors.blue[700],
+        iconTheme: const IconThemeData(color: Colors.white), // <-- Makes back icon white
+        titleTextStyle: const TextStyle(
+          color: Colors.white, fontSize: 20
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -148,15 +152,18 @@ class JobDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 24),
                 Center(
-                  child: ElevatedButton.icon(
-                    icon: Icon(Icons.send),
-                    label: Text('Apply Now'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                      textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
+                child: ElevatedButton.icon(
+                  icon: Icon(Icons.send, color: Colors.white), // Icon color changed to white
+                  label: Text(
+                    'Apply Now',
+                    style: TextStyle(color: Colors.white), // Text color changed to white
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Application submitted successfully!')),

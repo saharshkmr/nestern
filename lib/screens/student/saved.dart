@@ -3,12 +3,8 @@ import 'package:nestern/screens/student/student_dashboard.dart';
 import 'package:nestern/screens/internship_bangalore.dart';
 import 'package:nestern/screens/internship_delhi.dart';
 import 'package:nestern/screens/internship_mumbai.dart';
-import 'package:nestern/screens/job_banglaore.dart';
-import 'package:nestern/screens/job_delhi.dart';
-import 'package:nestern/screens/job_mumbai.dart';
 import 'package:nestern/screens/full_stack_course.dart';
 import 'package:nestern/screens/data_science_course.dart';
-import 'package:nestern/screens/ui_ux_design_course.dart';
 import 'package:nestern/screens/internships.dart';
 import 'package:nestern/screens/student/profile_page.dart';
 import 'package:nestern/widgets/hoverableDropdown.dart';
@@ -121,20 +117,20 @@ class Saved extends StatelessWidget {
                     ],
                     onSelected: (value) {
                       if (value == 'Jobs in Delhi') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageDelhi()),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => JobPageDelhi()),
+                        // );
                       } else if (value == 'Jobs in Mumbai') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageMumbai()),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => JobPageMumbai()),
+                        // );
                       } else if (value == 'Jobs in Bangalore') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => JobPageBangalore()),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => JobPageBangalore()),
+                        // );
                       }
                     },
                   ),
@@ -178,10 +174,10 @@ class Saved extends StatelessWidget {
                           MaterialPageRoute(builder: (context) => DataScienceCoursePage()),
                         );
                       } else if (value == 'UI/UX Design') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => UIUXDesignCoursePage()),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => UIUXDesignCoursePage()),
+                        // );
                       }
                     },
                   ),

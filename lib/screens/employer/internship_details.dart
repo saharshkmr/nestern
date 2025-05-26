@@ -29,6 +29,10 @@ class InternshipDetailsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(internship.title),
         backgroundColor: Colors.blue[700],
+        iconTheme: const IconThemeData(color: Colors.white), // <-- Makes back icon white
+        titleTextStyle: const TextStyle(
+          color: Colors.white, fontSize: 20
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -149,8 +153,11 @@ class InternshipDetailsPage extends StatelessWidget {
                 SizedBox(height: 24),
                 Center(
                   child: ElevatedButton.icon(
-                    icon: Icon(Icons.send),
-                    label: Text('Apply Now'),
+                    icon: Icon(Icons.send, color: Colors.white), // Icon color changed to white
+                    label: Text(
+                      'Apply Now',
+                      style: TextStyle(color: Colors.white), // Text color changed to white
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),

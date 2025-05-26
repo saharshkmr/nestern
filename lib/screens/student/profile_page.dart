@@ -5,23 +5,11 @@ import 'package:nestern/screens/dashboard.dart';
 import 'package:nestern/screens/employer/course_details.dart';
 import 'package:nestern/screens/employer/internship_details.dart';
 import 'package:nestern/screens/employer/job_details.dart';
-import 'package:nestern/screens/job_banglaore.dart';
-import 'package:nestern/screens/job_delhi.dart';
-import 'package:nestern/screens/job_mumbai.dart';
-import 'package:nestern/screens/login.dart';
 import 'package:nestern/screens/student/enrolled_courses.dart';
 import 'package:nestern/screens/student/myapplications.dart';
 import 'package:nestern/screens/student/saved.dart';
 import 'package:nestern/screens/student/student_dashboard.dart';
 import 'package:nestern/screens/student/student_profile.dart';
-import 'package:nestern/screens/student_signup.dart';
-import 'package:nestern/screens/employer_signup.dart';
-import 'package:nestern/screens/internship_bangalore.dart';
-import 'package:nestern/screens/internship_delhi.dart';
-import 'package:nestern/screens/internship_mumbai.dart';
-import 'package:nestern/screens/full_stack_course.dart';
-import 'package:nestern/screens/data_science_course.dart';
-import 'package:nestern/screens/ui_ux_design_course.dart';
 import 'package:nestern/screens/internships.dart';
 import 'package:nestern/screens/jobs.dart';
 import 'package:nestern/screens/contact_us.dart';
@@ -32,7 +20,6 @@ import 'package:nestern/widgets/hoverableDropdown.dart';
 import 'package:nestern/models/user.dart' as my_model;
 import 'package:nestern/widgets/recommended_widget.dart';
 import 'package:nestern/models/internship.dart'; // Add this import for Internship model
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -51,17 +38,22 @@ class _ProfilePageState extends State<ProfilePage> {
   List<Internship> internships = [];
   bool isLoading = true;
 
-     Future<void> fetchLatestInternships() async {
-    try {
-      final internshipService = InternshipService();
-      final internships = await internshipService.getRecentInternships(); // Adjust method name as per your service
-      setState(() {
-        _latestInternships = internships.cast<Internship>();
-      });
-    } catch (e) {
-      print('Failed to fetch internships: $e');
-    }
+Future<void> fetchLatestInternships() async {
+  try {
+    final internshipService = InternshipService();
+    final fetchedInternships = await internshipService.getRecentInternships();
+    setState(() {
+      internships = fetchedInternships.cast<Internship>();
+      _latestInternships = fetchedInternships.cast<Internship>(); // <-- Add this line
+      isLoading = false;
+    });
+  } catch (e) {
+    print('Failed to fetch internships: $e');
+    setState(() {
+      isLoading = false;
+    });
   }
+}
   
   Future<void> fetchLatestCourses() async {
   try {
@@ -278,7 +270,12 @@ List<Course> _latestCourses = [];
                             return RecommendedInternshipCard(
                               internship: internship,
                               onTap: () {
-                                // Navigate to Job Details Page or show details
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => InternshipDetailsPage(internship: internship),
+                                  ),
+                                );
                               },
                             );
                           },
@@ -438,12 +435,12 @@ List<Course> _latestCourses = [];
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.account_circle, color: Colors.black),
+                  icon: Icon(Icons.edit, color: Colors.black),
                   onPressed: () {
                     if (user != null) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ProfilePage(user: user)),
+                        MaterialPageRoute(builder: (context) => StudentProfilePage(user: user!)),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(

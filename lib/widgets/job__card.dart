@@ -44,7 +44,8 @@ class _JobCardState extends State<JobCard> {
           ),
           elevation: 2,
           color: Colors.white,
-          child: Padding(
+          child: Container(
+            width: 250,// Match the height from job_card.dart
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
