@@ -1,6 +1,6 @@
 # 🚀 Nestern
 
-✨ A modern Flutter application that helps you [brief description of what the app does].
+✨ A modern Flutter application that helps you to find courses, jobs and internships.
 
 ## 🛠️ Features
 
