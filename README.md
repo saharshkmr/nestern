@@ -8,7 +8,7 @@
 ## 📱 Screenshots
 
 [Add some screenshots of your app here]
-
+  
 ## 🚀 Getting Started
 
 ### Prerequisites
