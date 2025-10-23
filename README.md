@@ -15,7 +15,7 @@
 
 - Flutter SDK (latest stable version)
 - Android Studio / Xcode (for emulator/simulator)
-- VS Code / Android Studio (as code editor)
+- VS Code / Android Studio (as code editor) 
 
 ### Installation
 
